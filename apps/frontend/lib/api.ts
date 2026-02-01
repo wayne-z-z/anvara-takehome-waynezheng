@@ -20,8 +20,8 @@ export async function api<T>(endpoint: string, options?: RequestInit): Promise<T
 }
 
 // Campaigns
-export const getCampaigns = (sponsorId?: string) =>
-  api<Campaign[]>(sponsorId ? `/api/campaigns?sponsorId=${sponsorId}` : '/api/campaigns');
+export const getCampaigns = (sponsorId?: string, options?: RequestInit) =>
+  api<Campaign[]>(sponsorId ? `/api/campaigns?sponsorId=${sponsorId}` : '/api/campaigns', options);
 export const getCampaign = (id: string) => api<Campaign>(`/api/campaigns/${id}`);
 export const createCampaign = (data: Record<string, unknown>) =>
   api<Campaign>('/api/campaigns', { method: 'POST', body: JSON.stringify(data) });
