@@ -34,3 +34,16 @@ export interface Placement {
   campaignId: string;
   adSlotId: string;
 }
+
+export interface DashboardStats {
+  sponsors: number;
+  publishers: number;
+  activeCampaigns: number;
+  totalPlacements: number;
+  metrics: {
+    totalImpressions: number;
+    totalClicks: number;
+    totalConversions: number;
+    avgCtr: string;
+  };
+}

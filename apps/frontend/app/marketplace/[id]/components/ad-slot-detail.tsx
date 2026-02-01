@@ -138,7 +138,7 @@ export function AdSlotDetail({ id }: Props) {
       setAdSlot({ ...adSlot, isAvailable: true });
       setMessage('');
     } catch (err) {
-      console.error('Failed to unbook:', err);
+      setBookingError(err instanceof Error ? err.message : 'Failed to reset booking');
     }
   };
 

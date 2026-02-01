@@ -22,7 +22,7 @@ export function Nav() {
         .then((data) => setRole(data.role))
         .catch(() => setRole(null));
     } else {
-      setRole(null);
+      queueMicrotask(() => setRole(null));
     }
   }, [user?.id]);
 

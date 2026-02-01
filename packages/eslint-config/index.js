@@ -55,7 +55,9 @@ export const reactConfig = [
       },
       globals: {
         ...globals.browser,
+        ...globals.node,
         ...globals.es2022,
+        RequestInit: 'readonly',
       },
     },
     plugins: {
