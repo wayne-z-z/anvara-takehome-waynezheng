@@ -89,6 +89,7 @@ router.post('/', async (req: AuthRequest, res: Response) => {
       cpcRate,
       startDate,
       endDate,
+      status,
       targetCategories,
       targetRegions,
     } = req.body;
@@ -100,6 +101,17 @@ router.post('/', async (req: AuthRequest, res: Response) => {
       return;
     }
 
+    const validStatuses = [
+      'DRAFT',
+      'PENDING_REVIEW',
+      'APPROVED',
+      'ACTIVE',
+      'PAUSED',
+      'COMPLETED',
+      'CANCELLED',
+    ] as const;
+    const campaignStatus = status && validStatuses.includes(status) ? status : 'DRAFT';
+
     const campaign = await prisma.campaign.create({
       data: {
         name,
@@ -109,6 +121,7 @@ router.post('/', async (req: AuthRequest, res: Response) => {
         cpcRate,
         startDate: new Date(startDate),
         endDate: new Date(endDate),
+        status: campaignStatus,
         targetCategories: targetCategories || [],
         targetRegions: targetRegions || [],
         sponsorId,

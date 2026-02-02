@@ -1,4 +1,9 @@
+'use client';
+
+import { useState } from 'react';
 import type { Campaign } from '@/lib/types';
+import { EditCampaignForm } from './edit-campaign-form';
+import { DeleteCampaignButton } from './delete-campaign-button';
 
 interface CampaignCardProps {
   campaign: Campaign;
@@ -12,6 +17,20 @@ const statusColors: Record<string, string> = {
 };
 
 export function CampaignCard({ campaign }: CampaignCardProps) {
+  const [editing, setEditing] = useState(false);
+
+  if (editing) {
+    return (
+      <div className="rounded-lg border-2 border-[--color-primary] p-4">
+        <EditCampaignForm
+          campaign={campaign}
+          onSuccess={() => setEditing(false)}
+          onCancel={() => setEditing(false)}
+        />
+      </div>
+    );
+  }
+
   const progress =
     campaign.budget > 0 ? (Number(campaign.spent) / Number(campaign.budget)) * 100 : 0;
 
@@ -45,12 +64,21 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
         </div>
       </div>
 
-      <div className="text-xs text-[--color-muted]">
+      <div className="mb-3 text-xs text-[--color-muted]">
         {new Date(campaign.startDate).toLocaleDateString()} -{' '}
         {new Date(campaign.endDate).toLocaleDateString()}
       </div>
 
-      {/* TODO: Add edit/view buttons */}
+      <div className="flex flex-wrap items-center gap-2 border-t border-[--color-border] pt-3">
+        <button
+          type="button"
+          onClick={() => setEditing(true)}
+          className="text-sm text-[--color-primary] underline hover:no-underline"
+        >
+          Edit
+        </button>
+        <DeleteCampaignButton campaignId={campaign.id} campaignName={campaign.name} />
+      </div>
     </div>
   );
 }

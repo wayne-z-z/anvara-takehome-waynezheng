@@ -12,9 +12,12 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291';
 
 export async function api<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_URL}${endpoint}`, {
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
     ...options,
+    credentials: options?.credentials ?? 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(options?.headers as Record<string, string> | undefined),
+    },
   });
   if (!res.ok) throw new Error('API request failed');
   return res.json();
@@ -24,17 +27,41 @@ export async function api<T>(endpoint: string, options?: RequestInit): Promise<T
 export const getCampaigns = (sponsorId?: string, options?: RequestInit) =>
   api<Campaign[]>(sponsorId ? `/api/campaigns?sponsorId=${sponsorId}` : '/api/campaigns', options);
 export const getCampaign = (id: string) => api<Campaign>(`/api/campaigns/${id}`);
-export const createCampaign = (data: Record<string, unknown>) =>
-  api<Campaign>('/api/campaigns', { method: 'POST', body: JSON.stringify(data) });
-// TODO: Add updateCampaign and deleteCampaign functions
+export const createCampaign = (data: Record<string, unknown>, options?: RequestInit) =>
+  api<Campaign>('/api/campaigns', { method: 'POST', body: JSON.stringify(data), ...options });
+export const updateCampaign = (id: string, data: Record<string, unknown>, options?: RequestInit) =>
+  api<Campaign>(`/api/campaigns/${id}`, { method: 'PUT', body: JSON.stringify(data), ...options });
+export const deleteCampaign = (id: string, options?: RequestInit) =>
+  fetch(`${API_URL}/api/campaigns/${id}`, {
+    method: 'DELETE',
+    credentials: 'include',
+    ...options,
+  }).then((res) => {
+    if (!res.ok) throw new Error('API request failed');
+    return undefined;
+  });
 
 // Ad Slots
-export const getAdSlots = (publisherId?: string) =>
-  api<AdSlot[]>(publisherId ? `/api/ad-slots?publisherId=${publisherId}` : '/api/ad-slots');
-export const getAdSlot = (id: string) => api<AdSlot>(`/api/ad-slots/${id}`);
-export const createAdSlot = (data: Record<string, unknown>) =>
-  api<AdSlot>('/api/ad-slots', { method: 'POST', body: JSON.stringify(data) });
-// TODO: Add updateAdSlot, deleteAdSlot functions
+export const getAdSlots = (publisherId?: string, options?: RequestInit) =>
+  api<AdSlot[]>(
+    publisherId ? `/api/ad-slots?publisherId=${publisherId}` : '/api/ad-slots',
+    options
+  );
+export const getAdSlot = (id: string, options?: RequestInit) =>
+  api<AdSlot>(`/api/ad-slots/${id}`, options);
+export const createAdSlot = (data: Record<string, unknown>, options?: RequestInit) =>
+  api<AdSlot>('/api/ad-slots', { method: 'POST', body: JSON.stringify(data), ...options });
+export const updateAdSlot = (id: string, data: Record<string, unknown>, options?: RequestInit) =>
+  api<AdSlot>(`/api/ad-slots/${id}`, { method: 'PUT', body: JSON.stringify(data), ...options });
+export const deleteAdSlot = (id: string, options?: RequestInit) =>
+  fetch(`${API_URL}/api/ad-slots/${id}`, {
+    method: 'DELETE',
+    credentials: 'include',
+    ...options,
+  }).then((res) => {
+    if (!res.ok) throw new Error('API request failed');
+    return undefined;
+  });
 
 // Placements
 export const getPlacements = () => api<Placement[]>('/api/placements');
