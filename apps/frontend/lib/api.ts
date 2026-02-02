@@ -23,9 +23,25 @@ export async function api<T>(endpoint: string, options?: RequestInit): Promise<T
   return res.json();
 }
 
+export interface PaginatedResponse<T> {
+  items: T[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
 // Campaigns
 export const getCampaigns = (sponsorId?: string, options?: RequestInit) =>
   api<Campaign[]>(sponsorId ? `/api/campaigns?sponsorId=${sponsorId}` : '/api/campaigns', options);
+export const getCampaignsPaginated = (
+  page: number,
+  limit: number,
+  options?: RequestInit
+) =>
+  api<PaginatedResponse<Campaign>>(
+    `/api/campaigns?page=${page}&limit=${limit}`,
+    options
+  );
 export const getCampaign = (id: string) => api<Campaign>(`/api/campaigns/${id}`);
 export const createCampaign = (data: Record<string, unknown>, options?: RequestInit) =>
   api<Campaign>('/api/campaigns', { method: 'POST', body: JSON.stringify(data), ...options });
@@ -47,6 +63,8 @@ export const getAdSlots = (publisherId?: string, options?: RequestInit) =>
     publisherId ? `/api/ad-slots?publisherId=${publisherId}` : '/api/ad-slots',
     options
   );
+export const getAdSlotsPaginated = (page: number, limit: number, options?: RequestInit) =>
+  api<PaginatedResponse<AdSlot>>(`/api/ad-slots?page=${page}&limit=${limit}`, options);
 export const getAdSlot = (id: string, options?: RequestInit) =>
   api<AdSlot>(`/api/ad-slots/${id}`, options);
 export const createAdSlot = (data: Record<string, unknown>, options?: RequestInit) =>

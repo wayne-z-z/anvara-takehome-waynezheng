@@ -450,7 +450,39 @@ async function main() {
     await prisma.adSlot.create({ data: slot });
   }
 
-  // Create campaigns
+  // Extra ad slots for demo publisher (devBlog) — for pagination testing
+  const adSlotTemplates = [
+    { name: 'Homepage Hero', type: 'DISPLAY' as const, basePrice: 600 },
+    { name: 'Article Mid-Content', type: 'DISPLAY' as const, basePrice: 280 },
+    { name: 'Newsletter Top', type: 'NEWSLETTER' as const, basePrice: 420 },
+    { name: 'Sidebar Sticky', type: 'DISPLAY' as const, basePrice: 320 },
+    { name: 'Below Fold Banner', type: 'DISPLAY' as const, basePrice: 180 },
+    { name: 'Video Pre-roll', type: 'VIDEO' as const, basePrice: 900 },
+    { name: 'Sponsored Post', type: 'NATIVE' as const, basePrice: 550 },
+    { name: 'Category Page Leaderboard', type: 'DISPLAY' as const, basePrice: 400 },
+    { name: 'Search Results Top', type: 'DISPLAY' as const, basePrice: 350 },
+    { name: 'Related Articles Widget', type: 'DISPLAY' as const, basePrice: 220 },
+    { name: 'Exit Intent Popup', type: 'DISPLAY' as const, basePrice: 380 },
+    { name: 'Weekly Digest Featured', type: 'NEWSLETTER' as const, basePrice: 500 },
+    { name: 'Podcast Mid-roll', type: 'PODCAST' as const, basePrice: 700 },
+    { name: 'In-feed Native', type: 'NATIVE' as const, basePrice: 290 },
+    { name: 'Footer CTA Block', type: 'DISPLAY' as const, basePrice: 160 },
+  ];
+  for (let i = 0; i < adSlotTemplates.length; i++) {
+    const t = adSlotTemplates[i];
+    await prisma.adSlot.create({
+      data: {
+        name: t.name,
+        description: `Additional slot for pagination testing (${i + 1}).`,
+        type: t.type,
+        basePrice: t.basePrice,
+        publisherId: devBlog.id,
+        isAvailable: i % 3 !== 0,
+      },
+    });
+  }
+
+  // Create campaigns for demo sponsor (acme) + techStartup
   await prisma.campaign.create({
     data: {
       name: 'Q1 Product Launch',
@@ -481,8 +513,50 @@ async function main() {
     },
   });
 
+  // Extra campaigns for demo sponsor (acme) — for pagination testing
+  const campaignNames = [
+    'H2 Retargeting',
+    'Summer Sale Push',
+    'Webinar Promotion',
+    'Holiday Campaign',
+    'Influencer Partnership',
+    'Email List Build',
+    'App Install Push',
+    'Conference Sponsorship',
+    'Podcast Series',
+    'LinkedIn Lead Gen',
+    'YouTube Pre-roll',
+    'Newsletter Takeover',
+    'Black Friday Blitz',
+    'New Year Launch',
+    'Customer Success Stories',
+  ];
+  const now = new Date();
+  for (let i = 0; i < campaignNames.length; i++) {
+    const start = new Date(now);
+    start.setMonth(start.getMonth() + i);
+    const end = new Date(start);
+    end.setMonth(end.getMonth() + 2);
+    await prisma.campaign.create({
+      data: {
+        name: campaignNames[i],
+        description: `Campaign for pagination testing (${i + 1}).`,
+        budget: 3000 + i * 200,
+        spent: 0,
+        startDate: start,
+        endDate: end,
+        status: i % 3 === 0 ? 'ACTIVE' : i % 3 === 1 ? 'PAUSED' : 'DRAFT',
+        targetCategories: ['Technology'],
+        targetRegions: ['US'],
+        sponsorId: acme.id,
+      },
+    });
+  }
+
   console.log('\nPrisma seed completed!');
-  console.log('  Created: 2 sponsors, 5 publishers, 20 ad slots, 2 campaigns');
+  console.log(
+    '  Created: 2 sponsors, 5 publishers, 35 ad slots (19 for demo publisher), 17 campaigns (16 for demo sponsor)'
+  );
 
   console.log('\n✅ All seeding complete!');
 }

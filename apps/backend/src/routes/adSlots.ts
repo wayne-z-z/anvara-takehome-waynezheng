@@ -7,28 +7,47 @@ const router: IRouter = Router();
 
 router.use(authMiddleware);
 
-// GET /api/ad-slots - List ad slots (publishers see only their own; sponsors see all for marketplace)
+const DEFAULT_LIMIT = 10;
+const MAX_LIMIT = 50;
+
+// GET /api/ad-slots - List ad slots (publishers see only their own; sponsors see all). Supports ?page=1&limit=10
 router.get('/', async (req: AuthRequest, res: Response) => {
   try {
-    const { type, available } = req.query;
+    const { type, available, page: pageStr, limit: limitStr } = req.query;
     const publisherId = req.user?.publisherId;
 
-    const adSlots = await prisma.adSlot.findMany({
-      where: {
-        ...(publisherId && { publisherId }),
-        ...(type && {
-          type: type as string as 'DISPLAY' | 'VIDEO' | 'NATIVE' | 'NEWSLETTER' | 'PODCAST',
-        }),
-        ...(available === 'true' && { isAvailable: true }),
-      },
-      include: {
-        publisher: { select: { id: true, name: true, category: true, monthlyViews: true } },
-        _count: { select: { placements: true } },
-      },
-      orderBy: { basePrice: 'desc' },
-    });
+    const where = {
+      ...(publisherId && { publisherId }),
+      ...(type && {
+        type: type as string as 'DISPLAY' | 'VIDEO' | 'NATIVE' | 'NEWSLETTER' | 'PODCAST',
+      }),
+      ...(available === 'true' && { isAvailable: true }),
+    };
 
-    res.json(adSlots);
+    const usePagination = pageStr != null || limitStr != null;
+    const page = usePagination ? Math.max(1, parseInt(String(pageStr), 10) || 1) : 1;
+    const limit = usePagination
+      ? Math.min(MAX_LIMIT, Math.max(1, parseInt(String(limitStr), 10) || DEFAULT_LIMIT))
+      : undefined;
+
+    const [adSlots, total] = await Promise.all([
+      prisma.adSlot.findMany({
+        where,
+        include: {
+          publisher: { select: { id: true, name: true, category: true, monthlyViews: true } },
+          _count: { select: { placements: true } },
+        },
+        orderBy: { basePrice: 'desc' },
+        ...(limit != null && { skip: (page - 1) * limit, take: limit }),
+      }),
+      usePagination ? prisma.adSlot.count({ where }) : Promise.resolve(0),
+    ]);
+
+    if (usePagination) {
+      res.json({ items: adSlots, total, page, limit });
+    } else {
+      res.json(adSlots);
+    }
   } catch (error) {
     console.error('Error fetching ad slots:', error);
     res.status(500).json({ error: 'Failed to fetch ad slots' });

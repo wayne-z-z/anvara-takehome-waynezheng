@@ -7,7 +7,10 @@ const router: IRouter = Router();
 
 router.use(authMiddleware);
 
-// GET /api/campaigns - List campaigns (sponsors see only their own)
+const DEFAULT_LIMIT = 10;
+const MAX_LIMIT = 50;
+
+// GET /api/campaigns - List campaigns (sponsors see only their own). Supports ?page=1&limit=10
 router.get('/', async (req: AuthRequest, res: Response) => {
   try {
     const sponsorId = req.user?.sponsorId;
@@ -16,21 +19,36 @@ router.get('/', async (req: AuthRequest, res: Response) => {
       return;
     }
 
-    const { status } = req.query;
+    const { status, page: pageStr, limit: limitStr } = req.query;
+    const where = {
+      sponsorId,
+      ...(status && { status: status as string as 'ACTIVE' | 'PAUSED' | 'COMPLETED' }),
+    };
 
-    const campaigns = await prisma.campaign.findMany({
-      where: {
-        sponsorId,
-        ...(status && { status: status as string as 'ACTIVE' | 'PAUSED' | 'COMPLETED' }),
-      },
-      include: {
-        sponsor: { select: { id: true, name: true, logo: true } },
-        _count: { select: { creatives: true, placements: true } },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+    const usePagination = pageStr != null || limitStr != null;
+    const page = usePagination ? Math.max(1, parseInt(String(pageStr), 10) || 1) : 1;
+    const limit = usePagination
+      ? Math.min(MAX_LIMIT, Math.max(1, parseInt(String(limitStr), 10) || DEFAULT_LIMIT))
+      : undefined;
 
-    res.json(campaigns);
+    const [campaigns, total] = await Promise.all([
+      prisma.campaign.findMany({
+        where,
+        include: {
+          sponsor: { select: { id: true, name: true, logo: true } },
+          _count: { select: { creatives: true, placements: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+        ...(limit != null && { skip: (page - 1) * limit, take: limit }),
+      }),
+      usePagination ? prisma.campaign.count({ where }) : Promise.resolve(0),
+    ]);
+
+    if (usePagination) {
+      res.json({ items: campaigns, total, page, limit });
+    } else {
+      res.json(campaigns);
+    }
   } catch (error) {
     console.error('Error fetching campaigns:', error);
     res.status(500).json({ error: 'Failed to fetch campaigns' });
