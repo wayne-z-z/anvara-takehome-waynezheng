@@ -88,3 +88,17 @@ export const createPlacement = (data: Record<string, unknown>) =>
 
 // Dashboard
 export const getStats = () => api<DashboardStats>('/api/dashboard/stats');
+
+// Newsletter (dummy endpoint)
+export async function subscribeNewsletter(email: string): Promise<{ success: true; message: string }> {
+  const res = await fetch(`${API_URL}/api/newsletter/subscribe`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+  const data = (await res.json()) as { success: boolean; message?: string; error?: string };
+  if (!res.ok || !data.success) {
+    throw new Error(data.error ?? 'Subscription failed');
+  }
+  return { success: true, message: data.message ?? 'Thanks for subscribing!' };
+}
