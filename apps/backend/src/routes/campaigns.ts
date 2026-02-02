@@ -125,7 +125,110 @@ router.post('/', async (req: AuthRequest, res: Response) => {
   }
 });
 
-// TODO: Add PUT /api/campaigns/:id endpoint
-// Update campaign details (name, budget, dates, status, etc.)
+// PUT /api/campaigns/:id - Update campaign (verify ownership)
+router.put('/:id', async (req: AuthRequest, res: Response) => {
+  try {
+    const sponsorId = req.user?.sponsorId;
+    if (!sponsorId) {
+      res.status(403).json({ error: 'Forbidden' });
+      return;
+    }
+
+    const id = getParam(req.params.id);
+    const existing = await prisma.campaign.findUnique({
+      where: { id },
+    });
+
+    if (!existing) {
+      res.status(404).json({ error: 'Campaign not found' });
+      return;
+    }
+
+    if (existing.sponsorId !== sponsorId) {
+      res.status(403).json({ error: 'Forbidden' });
+      return;
+    }
+
+    const {
+      name,
+      description,
+      budget,
+      spent,
+      cpmRate,
+      cpcRate,
+      startDate,
+      endDate,
+      targetCategories,
+      targetRegions,
+      status,
+    } = req.body;
+
+    const data: Record<string, unknown> = {};
+    if (name !== undefined) data.name = name;
+    if (description !== undefined) data.description = description;
+    if (budget !== undefined) data.budget = budget;
+    if (spent !== undefined) data.spent = spent;
+    if (cpmRate !== undefined) data.cpmRate = cpmRate;
+    if (cpcRate !== undefined) data.cpcRate = cpcRate;
+    if (startDate !== undefined) data.startDate = new Date(startDate);
+    if (endDate !== undefined) data.endDate = new Date(endDate);
+    if (targetCategories !== undefined) data.targetCategories = targetCategories;
+    if (targetRegions !== undefined) data.targetRegions = targetRegions;
+    if (status !== undefined) data.status = status;
+
+    if (Object.keys(data).length === 0) {
+      res.status(400).json({ error: 'No valid fields to update' });
+      return;
+    }
+
+    const campaign = await prisma.campaign.update({
+      where: { id },
+      data,
+      include: {
+        sponsor: { select: { id: true, name: true } },
+      },
+    });
+
+    res.json(campaign);
+  } catch (error) {
+    console.error('Error updating campaign:', error);
+    res.status(500).json({ error: 'Failed to update campaign' });
+  }
+});
+
+// DELETE /api/campaigns/:id - Delete campaign (verify ownership)
+router.delete('/:id', async (req: AuthRequest, res: Response) => {
+  try {
+    const sponsorId = req.user?.sponsorId;
+    if (!sponsorId) {
+      res.status(403).json({ error: 'Forbidden' });
+      return;
+    }
+
+    const id = getParam(req.params.id);
+    const existing = await prisma.campaign.findUnique({
+      where: { id },
+    });
+
+    if (!existing) {
+      res.status(404).json({ error: 'Campaign not found' });
+      return;
+    }
+
+    if (existing.sponsorId !== sponsorId) {
+      res.status(403).json({ error: 'Forbidden' });
+      return;
+    }
+
+    await prisma.campaign.delete({
+      where: { id },
+    });
+
+    res.status(204).send();
+  } catch (error) {
+    console.error('Error deleting campaign:', error);
+    res.status(500).json({ error: 'Failed to delete campaign' });
+  }
+});
 
 export default router;
