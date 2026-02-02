@@ -1,21 +1,34 @@
+import type { ReactNode } from 'react';
 import type { Campaign } from '@/lib/types';
+import { ErrorState } from '@/app/components/error-state';
+import { EmptyState } from '@/app/components/empty-state';
 import { CampaignCard } from './campaign-card';
 
 interface CampaignListProps {
   campaigns: Campaign[];
   error: string | null;
+  /** Optional CTA for empty state (e.g. Create Campaign button) */
+  emptyAction?: ReactNode;
 }
 
-export function CampaignList({ campaigns, error }: CampaignListProps) {
+export function CampaignList({ campaigns, error, emptyAction }: CampaignListProps) {
   if (error) {
-    return <div className="rounded border border-red-200 bg-red-50 p-4 text-red-600">{error}</div>;
+    return (
+      <ErrorState
+        title="Unable to load campaigns"
+        message="Please check your connection and try again."
+      />
+    );
   }
 
   if (campaigns.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-[--color-border] p-8 text-center text-[--color-muted]">
-        No campaigns yet. Create your first campaign to get started.
-      </div>
+      <EmptyState
+        icon="📢"
+        title="No campaigns yet"
+        description="Create your first campaign to reach your audience and start booking ad slots."
+        action={emptyAction}
+      />
     );
   }
 

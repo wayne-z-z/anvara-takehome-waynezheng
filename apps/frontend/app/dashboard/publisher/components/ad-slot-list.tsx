@@ -1,21 +1,34 @@
+import type { ReactNode } from 'react';
 import type { AdSlot } from '@/lib/types';
+import { ErrorState } from '@/app/components/error-state';
+import { EmptyState } from '@/app/components/empty-state';
 import { AdSlotCard } from './ad-slot-card';
 
 interface AdSlotListProps {
   adSlots: AdSlot[];
   error: string | null;
+  /** Optional CTA for empty state (e.g. Create Ad Slot button) */
+  emptyAction?: ReactNode;
 }
 
-export function AdSlotList({ adSlots, error }: AdSlotListProps) {
+export function AdSlotList({ adSlots, error, emptyAction }: AdSlotListProps) {
   if (error) {
-    return <div className="rounded border border-red-200 bg-red-50 p-4 text-red-600">{error}</div>;
+    return (
+      <ErrorState
+        title="Unable to load ad slots"
+        message="Please check your connection and try again."
+      />
+    );
   }
 
   if (adSlots.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-[--color-border] p-8 text-center text-[--color-muted]">
-        No ad slots yet. Create your first ad slot to start earning.
-      </div>
+      <EmptyState
+        icon="📺"
+        title="No ad slots yet"
+        description="Create your first ad slot to start earning. Sponsors can discover and book your inventory."
+        action={emptyAction}
+      />
     );
   }
 
