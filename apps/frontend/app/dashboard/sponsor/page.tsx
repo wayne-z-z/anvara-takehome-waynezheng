@@ -20,11 +20,16 @@ export default async function SponsorDashboard() {
     redirect('/');
   }
 
-  // Fetch campaigns on the server (no client-side useEffect)
+  // Fetch campaigns on the server; forward cookie so backend can validate session
+  const headersList = await headers();
+  const cookie = headersList.get('cookie') ?? '';
   let campaigns: Awaited<ReturnType<typeof getCampaigns>> = [];
   let error: string | null = null;
   try {
-    campaigns = await getCampaigns(roleData.sponsorId, { cache: 'no-store' });
+    campaigns = await getCampaigns(undefined, {
+      cache: 'no-store',
+      headers: { Cookie: cookie },
+    });
   } catch {
     error = 'Failed to load campaigns';
   }
