@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { AdSlot } from '@/lib/types';
+import { Modal } from '@/app/components/modal';
 import { EditAdSlotForm } from './edit-ad-slot-form';
 import { DeleteAdSlotButton } from './delete-ad-slot-button';
 
@@ -20,20 +21,8 @@ const typeColors: Record<string, string> = {
 export function AdSlotCard({ adSlot }: AdSlotCardProps) {
   const [editing, setEditing] = useState(false);
 
-  if (editing) {
-    return (
-      <div className="rounded-lg border-2 border-[--color-primary] p-4">
-        <EditAdSlotForm
-          adSlot={adSlot}
-          onSuccess={() => setEditing(false)}
-          onCancel={() => setEditing(false)}
-        />
-      </div>
-    );
-  }
-
   return (
-    <div className="rounded-lg border border-[--color-border] p-4">
+    <div className="rounded-xl border border-[--color-border] bg-[--color-background] p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
       <div className="mb-2 flex items-start justify-between">
         <h3 className="font-semibold">{adSlot.name}</h3>
         <span className={`rounded px-2 py-0.5 text-xs ${typeColors[adSlot.type] || 'bg-gray-100'}`}>
@@ -60,7 +49,7 @@ export function AdSlotCard({ adSlot }: AdSlotCardProps) {
         <button
           type="button"
           onClick={() => setEditing(true)}
-          className="text-sm text-[--color-primary] underline hover:no-underline"
+          className="inline-flex min-h-[40px] items-center rounded-lg border border-[--color-border] bg-[--color-background] px-3 py-2 text-sm font-medium text-[--color-foreground] transition-colors hover:bg-[--color-border]"
         >
           Edit
         </button>
@@ -70,6 +59,19 @@ export function AdSlotCard({ adSlot }: AdSlotCardProps) {
           onSuccess={() => setEditing(false)}
         />
       </div>
+
+      <Modal
+        open={editing}
+        onClose={() => setEditing(false)}
+        title="Edit ad slot"
+        maxWidth="max-w-lg"
+      >
+        <EditAdSlotForm
+          adSlot={adSlot}
+          onSuccess={() => setEditing(false)}
+          onCancel={() => setEditing(false)}
+        />
+      </Modal>
     </div>
   );
 }

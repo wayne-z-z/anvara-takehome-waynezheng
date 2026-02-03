@@ -3,17 +3,35 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Nav } from './components/nav';
 import { Footer } from './components/footer';
+import { ToastProvider } from './components/toast';
 
 // TODO: Add ErrorBoundary wrapper for graceful error handling
 // TODO: Consider adding a loading.tsx for Suspense boundaries
-// TODO: Add Open Graph metadata for social media sharing
-// TODO: Add Twitter Card metadata
 // TODO: Consider adding favicon and app icons
 
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3847';
+
 export const metadata: Metadata = {
-  title: 'Anvara Marketplace',
-  description: 'Sponsorship marketplace connecting sponsors with publishers',
-  // Missing: openGraph, twitter, icons, viewport, etc.
+  title: {
+    default: 'Anvara — Sponsorship Marketplace',
+    template: '%s | Anvara',
+  },
+  description:
+    'Sponsorship marketplace connecting sponsors with publishers. Reach your audience. List ad slots, run campaigns, connect.',
+  openGraph: {
+    type: 'website',
+    url: siteUrl,
+    siteName: 'Anvara',
+    title: 'Anvara — Sponsorship Marketplace',
+    description:
+      'Sponsorship marketplace connecting sponsors with publishers. Reach your audience.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Anvara — Sponsorship Marketplace',
+    description:
+      'Sponsorship marketplace connecting sponsors with publishers. Reach your audience.',
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -22,9 +40,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body className="flex min-h-screen flex-col antialiased">
-        <Nav />
-        <main className="mx-auto flex-1 w-full max-w-6xl p-4">{children}</main>
-        <Footer />
+        <ToastProvider>
+          <Nav />
+          <main className="mx-auto flex-1 w-full max-w-6xl p-4">{children}</main>
+          <Footer />
+        </ToastProvider>
       </body>
     </html>
   );

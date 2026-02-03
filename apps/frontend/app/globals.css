@@ -55,6 +55,45 @@ body {
     sans-serif;
 }
 
+/* Toast slide-in (used by toast component) */
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.toast-in {
+  animation: toast-in 0.3s ease-out;
+}
+
+/* Dashboard form inputs: focus ring and consistent spacing */
+.form-input {
+  width: 100%;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.form-input::placeholder {
+  color: var(--color-muted);
+}
+.form-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+.form-input:hover:not(:focus) {
+  border-color: var(--color-muted);
+}
+
 /*
  * HINT: Use Tailwind v4 arbitrary values with CSS vars:
  * - bg-[--color-primary] for custom backgrounds

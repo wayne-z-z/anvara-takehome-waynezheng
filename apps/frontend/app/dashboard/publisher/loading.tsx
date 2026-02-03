@@ -1,6 +1,6 @@
 function AdSlotCardSkeleton() {
   return (
-    <div className="rounded-lg border border-[--color-border] p-4">
+    <div className="rounded-xl border border-[--color-border] bg-[--color-background] p-4 shadow-sm">
       <div className="mb-2 flex items-start justify-between">
         <div className="h-5 w-28 animate-pulse rounded bg-gray-200" />
         <div className="h-6 w-16 animate-pulse rounded bg-gray-200" />
