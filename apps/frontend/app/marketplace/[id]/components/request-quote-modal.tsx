@@ -72,20 +72,20 @@ export function RequestQuoteModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-0 sm:items-center sm:p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby="request-quote-title"
     >
-      <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl border border-[--color-border] bg-white shadow-2xl dark:bg-gray-900">
-        <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-xl border-b border-[--color-border] bg-white px-4 py-3 dark:bg-gray-900">
+      <div className="h-[90vh] w-full max-h-[90vh] overflow-y-auto rounded-t-2xl border border-b-0 border-[--color-border] bg-white shadow-2xl dark:bg-gray-900 sm:h-auto sm:max-h-[90vh] sm:rounded-xl sm:border-b sm:border-[--color-border]">
+        <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-2xl border-b border-[--color-border] bg-white px-4 py-3 dark:bg-gray-900 sm:rounded-t-xl">
           <h2 id="request-quote-title" className="text-lg font-semibold">
             Request a Quote — {adSlotName}
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="rounded p-1 text-[--color-muted] hover:bg-gray-100 hover:text-[--color-foreground] focus:outline-none focus:ring-2 focus:ring-[--color-primary]"
+            className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded text-[--color-muted] hover:bg-gray-100 hover:text-[--color-foreground] focus:outline-none focus:ring-2 focus:ring-[--color-primary]"
             aria-label="Close"
           >
             ✕
