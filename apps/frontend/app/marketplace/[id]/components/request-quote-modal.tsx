@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from 'react';
 import { requestQuote } from '@/lib/api';
+import { analytics } from '@/lib/analytics';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -64,6 +65,7 @@ export function RequestQuoteModal({
         timeline: timeline.trim() || undefined,
       });
       setStatus('success');
+      analytics.quoteSubmitted(adSlotId);
     } catch (err) {
       setStatus('error');
       setErrorMessage(err instanceof Error ? err.message : 'Something went wrong. Please try again.');

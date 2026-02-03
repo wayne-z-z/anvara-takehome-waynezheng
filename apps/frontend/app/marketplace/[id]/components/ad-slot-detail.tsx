@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getAdSlot } from '@/lib/api';
 import { authClient } from '@/auth-client';
+import { analytics } from '@/lib/analytics';
 import { RequestQuoteModal } from './request-quote-modal';
 
 interface AdSlot {
@@ -114,6 +115,7 @@ export function AdSlotDetail({ id }: Props) {
 
       setBookingSuccess(true);
       setAdSlot({ ...adSlot, isAvailable: false });
+      analytics.bookPlacementClick(adSlot.id, adSlot.name);
     } catch (err) {
       setBookingError(err instanceof Error ? err.message : 'Failed to book placement');
     } finally {
@@ -305,7 +307,10 @@ export function AdSlotDetail({ id }: Props) {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setShowQuoteModal(true)}
+                    onClick={() => {
+                      analytics.requestQuoteClick(adSlot.id, adSlot.name);
+                      setShowQuoteModal(true);
+                    }}
                     className="min-h-[48px] flex-1 rounded-lg border-2 border-[--color-border] bg-[--color-background] px-5 py-3 text-base font-semibold text-[--color-foreground] transition-colors hover:border-[--color-primary] hover:bg-[--color-primary]/5"
                   >
                     Request a quote
@@ -321,7 +326,10 @@ export function AdSlotDetail({ id }: Props) {
                 </p>
                 <button
                   type="button"
-                  onClick={() => setShowQuoteModal(true)}
+                  onClick={() => {
+                    analytics.requestQuoteClick(adSlot.id, adSlot.name);
+                    setShowQuoteModal(true);
+                  }}
                   className="w-full min-h-[48px] rounded-lg bg-indigo-600 px-5 py-3 text-base font-semibold text-white shadow-md transition-[transform,box-shadow] hover:bg-indigo-700 hover:shadow-lg active:scale-[0.98]"
                 >
                   Request a quote

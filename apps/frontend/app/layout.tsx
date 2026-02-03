@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import './globals.css';
 import { Nav } from './components/nav';
 import { Footer } from './components/footer';
@@ -38,6 +39,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   // HINT: If using React Query, you would wrap children with QueryClientProvider here
   // See: https://tanstack.com/query/latest/docs/framework/react/guides/advanced-ssr
+  const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+
   return (
     <html lang="en">
       <body className="flex min-h-screen flex-col antialiased">
@@ -46,6 +49,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <main className="mx-auto flex-1 w-full max-w-6xl p-4">{children}</main>
           <Footer />
         </ToastProvider>
+        {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
       </body>
     </html>
   );

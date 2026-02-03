@@ -5,6 +5,7 @@ import { useFormStatus } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useToast } from '@/app/components/toast';
+import { analytics } from '@/lib/analytics';
 import { createCampaignAction, type CampaignFormState } from '../actions';
 
 const initialState: CampaignFormState = {};
@@ -32,6 +33,7 @@ export function CreateCampaignForm({ onSuccess }: { onSuccess?: () => void }) {
     if (state.success) {
       router.refresh();
       toast.success('Campaign created');
+      analytics.campaignCreated();
       onSuccess?.();
     }
   }, [state.success, router, toast, onSuccess]);

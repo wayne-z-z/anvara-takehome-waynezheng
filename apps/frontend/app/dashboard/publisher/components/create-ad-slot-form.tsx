@@ -5,6 +5,7 @@ import { useFormStatus } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useToast } from '@/app/components/toast';
+import { analytics } from '@/lib/analytics';
 import { createAdSlotAction, type AdSlotFormState } from '../actions';
 
 const AD_SLOT_TYPES = ['DISPLAY', 'VIDEO', 'NATIVE', 'NEWSLETTER', 'PODCAST'] as const;
@@ -32,6 +33,7 @@ export function CreateAdSlotForm({ onSuccess }: { onSuccess?: () => void }) {
     if (state.success) {
       router.refresh();
       toast.success('Ad slot created');
+      analytics.adSlotCreated();
       onSuccess?.();
     }
   }, [state.success, router, toast, onSuccess]);
