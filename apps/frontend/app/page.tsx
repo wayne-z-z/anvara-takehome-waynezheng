@@ -24,34 +24,44 @@ export const metadata = {
 
 export default function Home() {
   return (
-    <article>
+    <article className="min-w-0">
       {/* Hero */}
-      <section className="py-16 text-center md:py-24">
-        <h1 className="mb-4 text-4xl font-bold tracking-tight text-[--color-foreground] md:text-5xl lg:text-6xl">
-          Connect with the right audiences
-        </h1>
-        <p className="mx-auto mb-8 max-w-2xl text-lg text-[--color-muted] md:text-xl">
-          The sponsorship marketplace where sponsors run campaigns and publishers monetize their
-          inventory. Simple, transparent, and built for scale.
-        </p>
-        <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <Link
-            href="/login"
-            className="min-h-[44px] w-full rounded-lg bg-[--color-primary] px-8 py-3 text-center font-semibold text-white hover:bg-[--color-primary-hover] sm:w-auto"
-          >
-            Get Started
-          </Link>
-          <Link
-            href="/marketplace"
-            className="min-h-[44px] w-full rounded-lg border-2 border-[--color-border] px-8 py-3 text-center font-semibold text-[--color-foreground] hover:border-[--color-primary] hover:bg-[--color-primary]/5 sm:w-auto"
-          >
-            Browse Marketplace
-          </Link>
+      <section
+        className="page-fade-in relative overflow-hidden py-16 text-center md:py-24"
+        aria-labelledby="hero-heading"
+      >
+        {/* Supporting visual: gradient orbs */}
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden" aria-hidden>
+          <div className="h-[280px] w-[280px] rounded-full bg-[--color-primary]/10 blur-3xl md:h-[360px] md:w-[360px]" />
+          <div className="absolute right-1/4 top-1/4 h-40 w-40 rounded-full bg-[--color-secondary]/10 blur-2xl" />
+        </div>
+        <div className="relative">
+          <h1 id="hero-heading" className="mb-4 text-4xl font-bold tracking-tight text-[--color-foreground] md:text-5xl lg:text-6xl">
+            Connect with the right audiences
+          </h1>
+          <p className="mx-auto mb-8 max-w-2xl text-lg text-[--color-muted] md:text-xl">
+            The sponsorship marketplace where sponsors run campaigns and publishers monetize their
+            inventory. Simple, transparent, and built for scale.
+          </p>
+          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <Link
+              href="/login"
+              className="min-h-[44px] w-full rounded-lg bg-[--color-primary] px-8 py-3 text-center font-semibold text-white shadow-sm transition-[transform,box-shadow,background-color] duration-200 hover:bg-[--color-primary-hover] hover:shadow-md active:scale-[0.98] sm:w-auto"
+            >
+              Get Started
+            </Link>
+            <Link
+              href="/marketplace"
+              className="min-h-[44px] w-full rounded-lg border-2 border-[--color-border] px-8 py-3 text-center font-semibold text-[--color-foreground] transition-colors hover:border-[--color-primary] hover:bg-[--color-primary]/5 sm:w-auto"
+            >
+              Browse Marketplace
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* Features */}
-      <section className="border-t border-[--color-border] py-16 md:py-20" aria-labelledby="features-heading">
+      <section className="page-fade-in page-fade-in-delay-1 border-t border-[--color-border] py-16 md:py-20" aria-labelledby="features-heading">
         <h2 id="features-heading" className="mb-10 text-center text-2xl font-bold text-[--color-foreground] md:text-3xl">
           Built for both sides
         </h2>
@@ -91,7 +101,7 @@ export default function Home() {
       </section>
 
       {/* How It Works */}
-      <section className="border-t border-[--color-border] py-16 md:py-20" aria-labelledby="how-heading">
+      <section className="page-fade-in page-fade-in-delay-2 border-t border-[--color-border] py-16 md:py-20" aria-labelledby="how-heading">
         <h2 id="how-heading" className="mb-10 text-center text-2xl font-bold text-[--color-foreground] md:text-3xl">
           How it works
         </h2>
@@ -120,18 +130,21 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Final CTA */}
-      <section className="border-t border-[--color-border] py-16 md:py-20" aria-labelledby="cta-heading">
+      {/* Final CTA + social proof */}
+      <section className="page-fade-in page-fade-in-delay-3 border-t border-[--color-border] py-16 md:py-20" aria-labelledby="cta-heading">
         <div className="mx-auto max-w-2xl rounded-2xl border border-[--color-border] bg-[--color-primary]/5 p-8 text-center md:p-12">
           <h2 id="cta-heading" className="mb-3 text-2xl font-bold text-[--color-foreground] md:text-3xl">
             Ready to get started?
           </h2>
-          <p className="mb-6 text-[--color-muted]">
+          <p className="mb-2 text-[--color-muted]">
             Join sponsors and publishers who use Anvara to reach the right audiences.
+          </p>
+          <p className="mb-6 text-sm font-medium text-[--color-foreground]/80">
+            Trusted by teams worldwide — sign up free, no credit card required.
           </p>
           <Link
             href="/login"
-            className="inline-block min-h-[44px] rounded-lg bg-[--color-primary] px-8 py-3 font-semibold text-white hover:bg-[--color-primary-hover]"
+            className="inline-block min-h-[44px] rounded-lg bg-[--color-primary] px-8 py-3 font-semibold text-white shadow-sm transition-[transform,box-shadow,background-color] duration-200 hover:bg-[--color-primary-hover] hover:shadow-md active:scale-[0.98]"
           >
             Sign up free
           </Link>

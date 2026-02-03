@@ -70,6 +70,39 @@ body {
   animation: toast-in 0.3s ease-out;
 }
 
+/* Page load: gentle fade-in for main content */
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.page-fade-in {
+  animation: page-fade-in 0.4s ease-out both;
+}
+.page-fade-in-delay-1 { animation-delay: 0.05s; }
+.page-fade-in-delay-2 { animation-delay: 0.1s; }
+.page-fade-in-delay-3 { animation-delay: 0.15s; }
+
+/* Modal panel: scale + fade in */
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.modal-in {
+  animation: modal-in 0.2s ease-out;
+}
+
 /* Dashboard form inputs: focus ring and consistent spacing */
 .form-input {
   width: 100%;

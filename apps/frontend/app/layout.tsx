@@ -12,6 +12,7 @@ import { ToastProvider } from './components/toast';
 const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3847';
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
     default: 'Anvara — Sponsorship Marketplace',
     template: '%s | Anvara',
