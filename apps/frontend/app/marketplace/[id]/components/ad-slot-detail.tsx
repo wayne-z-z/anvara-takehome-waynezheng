@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getAdSlot } from '@/lib/api';
 import { authClient } from '@/auth-client';
-import { analytics } from '@/lib/analytics';
+import { analytics, conversions, useTrackListingView } from '@/lib/analytics';
 import { RequestQuoteModal } from './request-quote-modal';
 
 interface AdSlot {
@@ -88,9 +88,12 @@ export function AdSlotDetail({ id }: Props) {
       .catch(() => setRoleLoading(false));
   }, [id]);
 
+  useTrackListingView(adSlot, roleInfo?.role ?? null, roleLoading);
+
   const handleBooking = async () => {
     if (!roleInfo?.sponsorId || !adSlot) return;
 
+    analytics.bookPlacementClick(adSlot.id, adSlot.name);
     setBooking(true);
     setBookingError(null);
 
@@ -115,7 +118,7 @@ export function AdSlotDetail({ id }: Props) {
 
       setBookingSuccess(true);
       setAdSlot({ ...adSlot, isAvailable: false });
-      analytics.bookPlacementClick(adSlot.id, adSlot.name);
+      conversions.placementBooked(adSlot.id, adSlot.name);
     } catch (err) {
       setBookingError(err instanceof Error ? err.message : 'Failed to book placement');
     } finally {

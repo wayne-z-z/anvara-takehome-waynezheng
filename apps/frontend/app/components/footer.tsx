@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useState, type FormEvent } from 'react';
 import { subscribeNewsletter } from '@/lib/api';
-import { analytics } from '@/lib/analytics';
+import { analytics, conversions } from '@/lib/analytics';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -33,6 +33,7 @@ export function Footer() {
       setMessage(result.message);
       setEmail('');
       analytics.newsletterSignup();
+      conversions.newsletterSignup();
     } catch (err) {
       setStatus('error');
       setMessage(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
