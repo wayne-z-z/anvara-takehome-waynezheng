@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { Campaign } from '@/lib/types';
+import { Modal } from '@/app/components/modal';
 import { EditCampaignForm } from './edit-campaign-form';
 import { DeleteCampaignButton } from './delete-campaign-button';
 
@@ -19,23 +20,11 @@ const statusColors: Record<string, string> = {
 export function CampaignCard({ campaign }: CampaignCardProps) {
   const [editing, setEditing] = useState(false);
 
-  if (editing) {
-    return (
-      <div className="rounded-lg border-2 border-[--color-primary] p-4">
-        <EditCampaignForm
-          campaign={campaign}
-          onSuccess={() => setEditing(false)}
-          onCancel={() => setEditing(false)}
-        />
-      </div>
-    );
-  }
-
   const progress =
     campaign.budget > 0 ? (Number(campaign.spent) / Number(campaign.budget)) * 100 : 0;
 
   return (
-    <div className="rounded-lg border border-[--color-border] p-4">
+    <div className="rounded-xl border border-[--color-border] bg-[--color-background] p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
       <div className="mb-2 flex items-start justify-between">
         <h3 className="font-semibold">{campaign.name}</h3>
         <span
@@ -73,12 +62,25 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
         <button
           type="button"
           onClick={() => setEditing(true)}
-          className="text-sm text-[--color-primary] underline hover:no-underline"
+          className="inline-flex min-h-[40px] items-center rounded-lg border border-[--color-border] bg-[--color-background] px-3 py-2 text-sm font-medium text-[--color-foreground] transition-colors hover:bg-[--color-border]"
         >
           Edit
         </button>
         <DeleteCampaignButton campaignId={campaign.id} campaignName={campaign.name} />
       </div>
+
+      <Modal
+        open={editing}
+        onClose={() => setEditing(false)}
+        title="Edit campaign"
+        maxWidth="max-w-lg"
+      >
+        <EditCampaignForm
+          campaign={campaign}
+          onSuccess={() => setEditing(false)}
+          onCancel={() => setEditing(false)}
+        />
+      </Modal>
     </div>
   );
 }
