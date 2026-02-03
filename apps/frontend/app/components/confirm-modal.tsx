@@ -50,7 +50,7 @@ export function ConfirmModal({
         onKeyDown={(e) => e.key === 'Escape' && onClose()}
         tabIndex={-1}
       />
-      <div className="modal-in relative z-10 w-full max-w-md rounded-xl border border-[--color-border] bg-[--color-background] p-6 shadow-2xl">
+      <div className="animate-modal-in relative z-10 w-full max-w-md rounded-xl border border-[--color-border] bg-[--color-background] p-6 shadow-2xl">
         <h2 id="confirm-title" className="text-lg font-semibold text-[--color-foreground]">
           {title}
         </h2>

@@ -66,34 +66,50 @@ function ToastList() {
       aria-label="Notifications"
     >
       {toasts.map((t) => (
-        <div
-          key={t.id}
-          className="toast-in pointer-events-auto flex min-w-[280px] max-w-[90vw] items-center gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3 text-gray-900 shadow-xl dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
-          role="status"
-        >
-          <span
-            className={
-              t.type === 'success'
-                ? 'text-green-600 dark:text-green-400'
-                : 'text-red-600 dark:text-red-400'
-            }
-            aria-hidden
-          >
-            {t.type === 'success' ? '✓' : '!'}
-          </span>
-          <p className="flex-1 text-sm font-medium">
-            {t.message}
-          </p>
-          <button
-            type="button"
-            onClick={() => removeToast(t.id)}
-            className="min-h-[44px] min-w-[44px] rounded p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-100"
-            aria-label="Dismiss"
-          >
-            ×
-          </button>
-        </div>
+        <ToastItem key={t.id} toast={t} onDismiss={removeToast} />
       ))}
+    </div>
+  );
+}
+
+function ToastItem({
+  toast,
+  onDismiss,
+}: {
+  toast: { id: string; message: string; type: 'success' | 'error' };
+  onDismiss: (id: string) => void;
+}) {
+  const [exiting, setExiting] = useState(false);
+  const handleDismiss = () => {
+    setExiting(true);
+    setTimeout(() => onDismiss(toast.id), 200);
+  };
+  return (
+    <div
+      className={`pointer-events-auto flex min-w-[280px] max-w-[90vw] items-center gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3 text-gray-900 shadow-xl dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 ${exiting ? 'animate-toast-out' : 'animate-toast-in'}`}
+      role="status"
+    >
+      <span
+        className={
+          toast.type === 'success'
+            ? 'text-green-600 dark:text-green-400'
+            : 'text-red-600 dark:text-red-400'
+        }
+        aria-hidden
+      >
+        {toast.type === 'success' ? '✓' : '!'}
+      </span>
+      <p className="flex-1 text-sm font-medium">
+        {toast.message}
+      </p>
+      <button
+        type="button"
+        onClick={handleDismiss}
+        className="min-h-[44px] min-w-[44px] rounded p-1 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-100"
+        aria-label="Dismiss"
+      >
+        ×
+      </button>
     </div>
   );
 }

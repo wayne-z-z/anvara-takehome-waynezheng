@@ -8,6 +8,12 @@ import { DeleteCampaignButton } from './delete-campaign-button';
 
 interface CampaignCardProps {
   campaign: Campaign;
+  /** Card is animating out (delete); show exit animation. */
+  isRemoving?: boolean;
+  /** Called when exit animation ends (so parent can run delete and refresh). */
+  onExitComplete?: (id: string) => void;
+  /** When provided, delete confirm triggers this instead of form (for exit animation). */
+  onRequestDelete?: (id: string) => void;
 }
 
 const statusColors: Record<string, string> = {
@@ -17,14 +23,26 @@ const statusColors: Record<string, string> = {
   COMPLETED: 'bg-blue-100 text-blue-700',
 };
 
-export function CampaignCard({ campaign }: CampaignCardProps) {
+export function CampaignCard({
+  campaign,
+  isRemoving,
+  onExitComplete,
+  onRequestDelete,
+}: CampaignCardProps) {
   const [editing, setEditing] = useState(false);
 
   const progress =
     campaign.budget > 0 ? (Number(campaign.spent) / Number(campaign.budget)) * 100 : 0;
 
+  const handleAnimationEnd = () => {
+    if (isRemoving && onExitComplete) onExitComplete(campaign.id);
+  };
+
   return (
-    <div className="rounded-xl border border-[--color-border] bg-[--color-background] p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+    <div
+      className={`rounded-xl border border-[--color-border] bg-[--color-background] p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${isRemoving ? 'animate-card-exit' : ''}`}
+      onAnimationEnd={handleAnimationEnd}
+    >
       <div className="mb-2 flex items-start justify-between">
         <h3 className="font-semibold">{campaign.name}</h3>
         <span
@@ -66,7 +84,11 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
         >
           Edit
         </button>
-        <DeleteCampaignButton campaignId={campaign.id} campaignName={campaign.name} />
+        <DeleteCampaignButton
+          campaignId={campaign.id}
+          campaignName={campaign.name}
+          onRequestDelete={onRequestDelete}
+        />
       </div>
 
       <Modal

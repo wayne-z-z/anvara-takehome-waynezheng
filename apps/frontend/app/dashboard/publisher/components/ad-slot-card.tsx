@@ -8,6 +8,12 @@ import { DeleteAdSlotButton } from './delete-ad-slot-button';
 
 interface AdSlotCardProps {
   adSlot: AdSlot;
+  /** Card is animating out (delete); show exit animation. */
+  isRemoving?: boolean;
+  /** Called when exit animation ends (so parent can run delete and refresh). */
+  onExitComplete?: (id: string) => void;
+  /** When provided, delete confirm triggers this instead of form (for exit animation). */
+  onRequestDelete?: (id: string) => void;
 }
 
 const typeColors: Record<string, string> = {
@@ -18,11 +24,23 @@ const typeColors: Record<string, string> = {
   PODCAST: 'bg-orange-100 text-orange-700',
 };
 
-export function AdSlotCard({ adSlot }: AdSlotCardProps) {
+export function AdSlotCard({
+  adSlot,
+  isRemoving,
+  onExitComplete,
+  onRequestDelete,
+}: AdSlotCardProps) {
   const [editing, setEditing] = useState(false);
 
+  const handleAnimationEnd = () => {
+    if (isRemoving && onExitComplete) onExitComplete(adSlot.id);
+  };
+
   return (
-    <div className="rounded-xl border border-[--color-border] bg-[--color-background] p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+    <div
+      className={`rounded-xl border border-[--color-border] bg-[--color-background] p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${isRemoving ? 'animate-card-exit' : ''}`}
+      onAnimationEnd={handleAnimationEnd}
+    >
       <div className="mb-2 flex items-start justify-between">
         <h3 className="font-semibold">{adSlot.name}</h3>
         <span className={`rounded px-2 py-0.5 text-xs ${typeColors[adSlot.type] || 'bg-gray-100'}`}>
@@ -57,6 +75,7 @@ export function AdSlotCard({ adSlot }: AdSlotCardProps) {
           adSlotId={adSlot.id}
           adSlotName={adSlot.name}
           onSuccess={() => setEditing(false)}
+          onRequestDelete={onRequestDelete}
         />
       </div>
 

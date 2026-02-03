@@ -27,10 +27,13 @@ export function DeleteCampaignButton({
   campaignId,
   campaignName,
   onSuccess,
+  onRequestDelete,
 }: {
   campaignId: string;
   campaignName: string;
   onSuccess?: () => void;
+  /** When provided, confirm triggers this instead of form submit (for exit animation). */
+  onRequestDelete?: (id: string) => void;
 }) {
   const router = useRouter();
   const toast = useToast();
@@ -45,6 +48,13 @@ export function DeleteCampaignButton({
       onSuccess?.();
     }
   }, [state.success, router, toast, onSuccess]);
+
+  const handleConfirm = () => {
+    if (onRequestDelete) {
+      onRequestDelete(campaignId);
+      setConfirming(false);
+    }
+  };
 
   return (
     <>
@@ -61,19 +71,31 @@ export function DeleteCampaignButton({
         title="Delete campaign?"
         description={`"${campaignName}" will be permanently removed. This cannot be undone.`}
         confirmSlot={
-          <div className="flex flex-col items-end gap-2">
-            <div className="flex shrink-0 items-center gap-3">
-              <form action={formAction} className="contents">
-                <input type="hidden" name="id" value={campaignId} />
-                <DeleteButton campaignName={campaignName} />
-              </form>
+          onRequestDelete ? (
+            <div className="flex shrink-0 justify-end">
+              <button
+                type="button"
+                onClick={handleConfirm}
+                className="min-h-[44px] rounded-lg border border-red-300 bg-red-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-red-700"
+              >
+                Delete &quot;{campaignName}&quot;
+              </button>
             </div>
-            {state.error && (
-              <p className="w-full text-sm text-red-600" role="alert">
-                {state.error}
-              </p>
-            )}
-          </div>
+          ) : (
+            <div className="flex flex-col items-end gap-2">
+              <div className="flex shrink-0 items-center gap-3">
+                <form action={formAction} className="contents">
+                  <input type="hidden" name="id" value={campaignId} />
+                  <DeleteButton campaignName={campaignName} />
+                </form>
+              </div>
+              {state.error && (
+                <p className="w-full text-sm text-red-600" role="alert">
+                  {state.error}
+                </p>
+              )}
+            </div>
+          )
         }
       />
     </>

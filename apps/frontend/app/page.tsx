@@ -27,7 +27,7 @@ export default function Home() {
     <article className="min-w-0">
       {/* Hero */}
       <section
-        className="page-fade-in relative overflow-hidden py-16 text-center md:py-24"
+        className="animate-page-fade-in relative overflow-hidden py-16 text-center md:py-24"
         aria-labelledby="hero-heading"
       >
         {/* Supporting visual: gradient orbs */}
@@ -61,7 +61,7 @@ export default function Home() {
       </section>
 
       {/* Features */}
-      <section className="page-fade-in page-fade-in-delay-1 border-t border-[--color-border] py-16 md:py-20" aria-labelledby="features-heading">
+      <section className="animate-page-fade-in animate-page-fade-in-delay-1 border-t border-[--color-border] py-16 md:py-20" aria-labelledby="features-heading">
         <h2 id="features-heading" className="mb-10 text-center text-2xl font-bold text-[--color-foreground] md:text-3xl">
           Built for both sides
         </h2>
@@ -101,7 +101,7 @@ export default function Home() {
       </section>
 
       {/* How It Works */}
-      <section className="page-fade-in page-fade-in-delay-2 border-t border-[--color-border] py-16 md:py-20" aria-labelledby="how-heading">
+      <section className="animate-page-fade-in animate-page-fade-in-delay-2 border-t border-[--color-border] py-16 md:py-20" aria-labelledby="how-heading">
         <h2 id="how-heading" className="mb-10 text-center text-2xl font-bold text-[--color-foreground] md:text-3xl">
           How it works
         </h2>
@@ -131,7 +131,7 @@ export default function Home() {
       </section>
 
       {/* Final CTA + social proof */}
-      <section className="page-fade-in page-fade-in-delay-3 border-t border-[--color-border] py-16 md:py-20" aria-labelledby="cta-heading">
+      <section className="animate-page-fade-in animate-page-fade-in-delay-3 border-t border-[--color-border] py-16 md:py-20" aria-labelledby="cta-heading">
         <div className="mx-auto max-w-2xl rounded-2xl border border-[--color-border] bg-[--color-primary]/5 p-8 text-center md:p-12">
           <h2 id="cta-heading" className="mb-3 text-2xl font-bold text-[--color-foreground] md:text-3xl">
             Ready to get started?

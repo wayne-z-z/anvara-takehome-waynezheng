@@ -12,7 +12,7 @@ export function CreateCampaignButton() {
       <button
         type="button"
         onClick={() => setShowForm(true)}
-        className="min-h-[44px] rounded-lg bg-[--color-primary] px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-[--color-primary-hover] hover:shadow-md"
+        className="min-h-[44px] rounded-lg bg-[--color-primary] px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-[--color-primary-hover] hover:shadow-md active:scale-[0.98]"
       >
         Create Campaign
       </button>

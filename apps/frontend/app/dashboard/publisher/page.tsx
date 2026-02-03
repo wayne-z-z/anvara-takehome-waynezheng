@@ -49,7 +49,7 @@ export default async function PublisherDashboard({
   const pageValue = adSlots.reduce((sum, s) => sum + Number(s.basePrice), 0);
 
   return (
-    <div className="space-y-6">
+    <div className="animate-page-fade-in space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold tracking-tight text-[--color-foreground]">
           My Ad Slots
