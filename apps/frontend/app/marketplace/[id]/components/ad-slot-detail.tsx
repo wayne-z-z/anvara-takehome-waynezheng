@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getAdSlot } from '@/lib/api';
 import { authClient } from '@/auth-client';
+import { RequestQuoteModal } from './request-quote-modal';
 
 interface AdSlot {
   id: string;
@@ -54,6 +55,7 @@ export function AdSlotDetail({ id }: Props) {
   const [booking, setBooking] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [bookingError, setBookingError] = useState<string | null>(null);
+  const [showQuoteModal, setShowQuoteModal] = useState(false);
 
   useEffect(() => {
     // Fetch ad slot
@@ -251,30 +253,50 @@ export function AdSlotDetail({ id }: Props) {
                   />
                 </div>
                 {bookingError && <p className="text-sm text-red-600">{bookingError}</p>}
-                <button
-                  onClick={handleBooking}
-                  disabled={booking}
-                  className="w-full rounded-lg bg-[--color-primary] px-4 py-3 font-semibold text-white transition-colors hover:opacity-90 disabled:opacity-50"
-                >
-                  {booking ? 'Booking...' : 'Book This Placement'}
-                </button>
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <button
+                    onClick={handleBooking}
+                    disabled={booking}
+                    className="min-h-[44px] flex-1 rounded-lg bg-[--color-primary] px-4 py-3 font-semibold text-white transition-colors hover:opacity-90 disabled:opacity-50"
+                  >
+                    {booking ? 'Booking...' : 'Book This Placement'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowQuoteModal(true)}
+                    className="min-h-[44px] flex-1 rounded-lg border border-[--color-border] px-4 py-3 font-medium hover:bg-gray-50"
+                  >
+                    Request a Quote
+                  </button>
+                </div>
               </div>
             ) : (
-              <div>
-                <button
-                  disabled
-                  className="w-full cursor-not-allowed rounded-lg bg-gray-300 px-4 py-3 font-semibold text-gray-500"
-                >
-                  Request This Placement
-                </button>
-                <p className="mt-2 text-center text-sm text-[--color-muted]">
+              <div className="space-y-3">
+                <p className="text-sm text-[--color-muted]">
                   {user
-                    ? 'Only sponsors can request placements'
-                    : 'Log in as a sponsor to request this placement'}
+                    ? 'Only sponsors can book directly. Request a quote for custom pricing or questions.'
+                    : 'Log in as a sponsor to book, or request a quote for custom pricing.'}
                 </p>
+                <button
+                  type="button"
+                  onClick={() => setShowQuoteModal(true)}
+                  className="w-full min-h-[44px] rounded-lg bg-[--color-primary] px-4 py-3 font-semibold text-white hover:opacity-90"
+                >
+                  Request a Quote
+                </button>
               </div>
             )}
           </div>
+        )}
+
+        {showQuoteModal && (
+          <RequestQuoteModal
+            adSlotId={adSlot.id}
+            adSlotName={adSlot.name}
+            defaultEmail={user?.email ?? ''}
+            defaultCompanyName={roleInfo?.name ?? user?.name ?? ''}
+            onClose={() => setShowQuoteModal(false)}
+          />
         )}
 
         {bookingSuccess && (

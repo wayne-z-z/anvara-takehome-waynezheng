@@ -89,6 +89,33 @@ export const createPlacement = (data: Record<string, unknown>) =>
 // Dashboard
 export const getStats = () => api<DashboardStats>('/api/dashboard/stats');
 
+// Quotes (dummy endpoint)
+export interface RequestQuotePayload {
+  adSlotId: string;
+  email: string;
+  companyName: string;
+  message?: string;
+  phone?: string;
+  budget?: string;
+  goals?: string;
+  timeline?: string;
+}
+
+export async function requestQuote(
+  data: RequestQuotePayload
+): Promise<{ success: true; quoteId: string }> {
+  const res = await fetch(`${API_URL}/api/quotes/request`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  const body = (await res.json()) as { success: boolean; quoteId?: string; error?: string };
+  if (!res.ok || !body.success) {
+    throw new Error(body.error ?? 'Request failed');
+  }
+  return { success: true, quoteId: body.quoteId ?? '' };
+}
+
 // Newsletter (dummy endpoint)
 export async function subscribeNewsletter(email: string): Promise<{ success: true; message: string }> {
   const res = await fetch(`${API_URL}/api/newsletter/subscribe`, {

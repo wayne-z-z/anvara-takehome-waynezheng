@@ -8,12 +8,14 @@ import placementsRoutes from './placements.js';
 import dashboardRoutes from './dashboard.js';
 import healthRoutes from './health.js';
 import newsletterRoutes from './newsletter.js';
+import quotesRoutes from './quotes.js';
 
 const router: IRouter = Router();
 
 // Mount all routes
 router.use('/auth', authRoutes);
 router.use('/newsletter', newsletterRoutes);
+router.use('/quotes', quotesRoutes);
 router.use('/sponsors', sponsorsRoutes);
 router.use('/publishers', publishersRoutes);
 router.use('/campaigns', campaignsRoutes);
