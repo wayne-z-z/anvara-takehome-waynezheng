@@ -1,7 +1,7 @@
 // Frontend utility functions
 
-// Format a price for display
-export function formatPrice(price: number, locale = 'en-US') {
+/** Format a number as USD price for display. */
+export function formatPrice(price: number, locale = 'en-US'): string {
   return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: 'USD',
@@ -17,7 +17,7 @@ export function debounce<T extends (...args: unknown[]) => void>(fn: T, delay: n
   };
 }
 
-// Parse query string parameters
+/** Parse a query string into a key-value object. */
 export function parseQueryString(queryString: string): Record<string, string> {
   const params: Record<string, string> = {};
   const searchParams = new URLSearchParams(queryString);
@@ -71,11 +71,11 @@ export const logger = {
   },
 };
 
-// TODO: Add a proper date formatting utility
-// BUG: Doesn't handle timezone or invalid dates
+/** Format a date as relative time (e.g. "Today", "2 days ago"); returns fallback for invalid dates. */
 export function formatRelativeTime(date: Date | string | number): string {
-  const now = new Date();
   const then = new Date(date);
+  if (Number.isNaN(then.getTime())) return '';
+  const now = new Date();
   const diff = now.getTime() - then.getTime();
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 

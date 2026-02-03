@@ -1,15 +1,14 @@
 // Utility helpers for the API
 
-// Helper to safely extract route/query params
-// BUG: Return type should be 'string' but function can return empty string silently
+/** Safely extract a single route/query param as string; returns '' if missing or invalid. */
 export function getParam(param: unknown): string {
   if (typeof param === 'string') return param;
   if (Array.isArray(param) && typeof param[0] === 'string') return param[0];
   return '';
 }
 
-// Helper to format currency values
-export function formatCurrency(amount: number, currency = 'USD') {
+/** Format a number as currency. */
+export function formatCurrency(amount: number, currency = 'USD'): string {
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency,
@@ -17,18 +16,21 @@ export function formatCurrency(amount: number, currency = 'USD') {
   return formatter.format(amount);
 }
 
-// Helper to calculate percentage change
-export function calculatePercentChange(oldValue: number, newValue: number) {
+/** Calculate percentage change between two values. */
+export function calculatePercentChange(oldValue: number, newValue: number): number {
   if (oldValue === 0) return newValue > 0 ? 100 : 0;
   return ((newValue - oldValue) / oldValue) * 100;
 }
 
-// Parse pagination params from query
-export function parsePagination(query: { page?: string; limit?: string }) {
-  const page = parseInt(query.page ?? '', 10) || 1;
-  const limit = parseInt(query.limit ?? '', 10) || 10;
+/** Parse pagination params from query; returns page, limit, and skip for DB. */
+export function parsePagination(query: { page?: string; limit?: string }): {
+  page: number;
+  limit: number;
+  skip: number;
+} {
+  const page = Math.max(1, parseInt(query.page ?? '', 10) || 1);
+  const limit = Math.max(1, Math.min(100, parseInt(query.limit ?? '', 10) || 10));
   const skip = (page - 1) * limit;
-
   return { page, limit, skip };
 }
 
@@ -54,23 +56,14 @@ export const buildFilters = (
   return filters;
 };
 
-/** @deprecated Use app config instead */
-export const DEPRECATED_CONFIG = {
-  apiVersion: 'v1',
-  timeout: 5000,
-};
-
-// BUG: This function has a logic error - it doesn't handle negative numbers correctly
+/** Clamp a number between min and max (inclusive). */
 export function clampValue(value: number, min: number, max: number): number {
-  // Should use Math.max(min, Math.min(max, value)) but this is wrong
-  if (value < min) return min;
-  if (value > max) return max;
-  return value;
+  return Math.max(min, Math.min(max, value));
 }
 
-// TODO: Add proper date formatting helper
-// This is a stub that candidates might notice and implement
+/** Format a date for display; returns fallback for invalid dates. */
 export function formatDate(date: Date | string | number): string {
-  // BUG: Doesn't handle invalid dates
-  return new Date(date).toLocaleDateString();
+  const d = new Date(date);
+  if (Number.isNaN(d.getTime())) return '';
+  return d.toLocaleDateString();
 }

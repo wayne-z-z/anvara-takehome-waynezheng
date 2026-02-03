@@ -47,7 +47,7 @@ export function Modal({ open, onClose, title, children, maxWidth = 'max-w-lg' }:
         tabIndex={-1}
       />
       <div
-        className={`relative z-10 w-full ${maxWidth} max-h-[90vh] overflow-y-auto rounded-xl border border-[--color-border] bg-[--color-background] shadow-2xl`}
+        className={`modal-in relative z-10 w-full ${maxWidth} max-h-[90vh] overflow-y-auto rounded-xl border border-[--color-border] bg-[--color-background] shadow-2xl`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="sticky top-0 flex items-center justify-between border-b border-[--color-border] bg-[--color-background] px-5 py-4">
