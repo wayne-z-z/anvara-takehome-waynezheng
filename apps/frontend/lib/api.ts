@@ -1,14 +1,33 @@
-// Simple API client
-// FIXME: This client has no error response parsing - when API returns { error: "..." },
-// we should extract and throw that message instead of generic "API request failed"
-
-// TODO: Add authentication token to requests
-// Hint: Include credentials: 'include' for cookie-based auth, or
-// add Authorization header for token-based auth
+// Simple API client with error response parsing
 
 import type { Campaign, AdSlot, Placement, DashboardStats } from './types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291';
+
+/** Error thrown by API client; includes HTTP status for callers to show specific messages (e.g. 401 → sign in). */
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    public readonly status: number
+  ) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
+/** Parse JSON error body when present; otherwise return status text or generic message. */
+async function getErrorMessage(res: Response): Promise<string> {
+  const contentType = res.headers.get('content-type');
+  if (contentType?.includes('application/json')) {
+    try {
+      const body = (await res.json()) as { error?: string; message?: string };
+      return body.error ?? body.message ?? (res.statusText || 'API request failed');
+    } catch {
+      return res.statusText || 'API request failed';
+    }
+  }
+  return res.statusText || 'API request failed';
+}
 
 export async function api<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_URL}${endpoint}`, {
@@ -19,8 +38,11 @@ export async function api<T>(endpoint: string, options?: RequestInit): Promise<T
       ...(options?.headers as Record<string, string> | undefined),
     },
   });
-  if (!res.ok) throw new Error('API request failed');
-  return res.json();
+  if (!res.ok) {
+    const message = await getErrorMessage(res);
+    throw new ApiError(message, res.status);
+  }
+  return res.json() as Promise<T>;
 }
 
 export interface PaginatedResponse<T> {
@@ -52,8 +74,8 @@ export const deleteCampaign = (id: string, options?: RequestInit) =>
     method: 'DELETE',
     credentials: 'include',
     ...options,
-  }).then((res) => {
-    if (!res.ok) throw new Error('API request failed');
+  }).then(async (res) => {
+    if (!res.ok) throw new ApiError(await getErrorMessage(res), res.status);
     return undefined;
   });
 
@@ -76,8 +98,8 @@ export const deleteAdSlot = (id: string, options?: RequestInit) =>
     method: 'DELETE',
     credentials: 'include',
     ...options,
-  }).then((res) => {
-    if (!res.ok) throw new Error('API request failed');
+  }).then(async (res) => {
+    if (!res.ok) throw new ApiError(await getErrorMessage(res), res.status);
     return undefined;
   });
 

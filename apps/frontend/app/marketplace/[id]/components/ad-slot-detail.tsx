@@ -98,6 +98,7 @@ export function AdSlotDetail({ id }: Props) {
         `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291'}/api/ad-slots/${adSlot.id}/book`,
         {
           method: 'POST',
+          credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             sponsorId: roleInfo.sponsorId,
@@ -123,17 +124,21 @@ export function AdSlotDetail({ id }: Props) {
   const handleUnbook = async () => {
     if (!adSlot) return;
 
+    setBookingError(null);
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291'}/api/ad-slots/${adSlot.id}/unbook`,
         {
           method: 'POST',
+          credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
         }
       );
 
       if (!response.ok) {
-        throw new Error('Failed to reset booking');
+        const data = await response.json().catch(() => ({}));
+        const msg = data?.error || (response.status === 403 ? 'Only the publisher can reset this listing.' : 'Failed to reset booking');
+        throw new Error(msg);
       }
 
       setBookingSuccess(false);
@@ -143,6 +148,8 @@ export function AdSlotDetail({ id }: Props) {
       setBookingError(err instanceof Error ? err.message : 'Failed to reset booking');
     }
   };
+
+  const canUnbook = Boolean(adSlot?.publisher && roleInfo?.publisherId && adSlot.publisher.id === roleInfo.publisherId);
 
   if (loading) {
     return <div className="py-12 text-center text-[--color-muted]">Loading...</div>;
@@ -163,68 +170,99 @@ export function AdSlotDetail({ id }: Props) {
 
   return (
     <div className="space-y-6">
-      <Link href="/marketplace" className="text-[--color-primary] hover:underline">
+      <Link
+        href="/marketplace"
+        className="inline-flex min-h-[44px] items-center text-sm font-medium text-[--color-primary] hover:underline"
+      >
         ← Back to Marketplace
       </Link>
 
-      <div className="rounded-lg border border-[--color-border] p-6">
-        <div className="mb-4 flex items-start justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">{adSlot.name}</h1>
-            {adSlot.publisher && (
-              <p className="text-[--color-muted]">
-                by {adSlot.publisher.name}
-                {adSlot.publisher.website && (
-                  <>
-                    {' '}
-                    ·{' '}
-                    <a
-                      href={adSlot.publisher.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[--color-primary] hover:underline"
-                    >
-                      {adSlot.publisher.website}
-                    </a>
-                  </>
-                )}
+      <div className="rounded-xl border border-[--color-border] bg-[--color-background] shadow-sm">
+        <div className="p-6 md:p-8">
+          <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-[--color-foreground] md:text-3xl">
+                {adSlot.name}
+              </h1>
+              {adSlot.publisher && (
+                <p className="mt-1 text-[--color-muted]">
+                  by {adSlot.publisher.name}
+                  {adSlot.publisher.website && (
+                    <>
+                      {' '}
+                      ·{' '}
+                      <a
+                        href={adSlot.publisher.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[--color-primary] hover:underline"
+                      >
+                        {adSlot.publisher.website}
+                      </a>
+                    </>
+                  )}
+                </p>
+              )}
+            </div>
+            <span
+              className={`rounded-full px-3 py-1.5 text-sm font-medium ${typeColors[adSlot.type] || 'bg-gray-100 text-gray-700'}`}
+            >
+              {adSlot.type}
+            </span>
+          </div>
+
+          {adSlot.description && (
+            <p className="mb-6 text-[--color-muted] leading-relaxed">{adSlot.description}</p>
+          )}
+
+          {/* Value prop: why book */}
+          <div className="mb-6 flex flex-wrap gap-4 text-sm text-[--color-muted]">
+            <span className="flex items-center gap-1.5">✓ Direct partnership</span>
+            <span className="flex items-center gap-1.5">✓ Clear pricing</span>
+            <span className="flex items-center gap-1.5">✓ No hidden fees</span>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-[--color-border] py-5">
+            <div>
+              <span
+                className={`inline-flex items-center gap-2 text-sm font-medium ${adSlot.isAvailable ? 'text-green-600' : 'text-[--color-muted]'}`}
+              >
+                <span
+                  className={`h-2.5 w-2.5 rounded-full ${adSlot.isAvailable ? 'bg-green-500' : 'bg-gray-400'}`}
+                  aria-hidden
+                />
+                {adSlot.isAvailable ? 'Available — reserve your spot' : 'Currently Booked'}
+              </span>
+              {!adSlot.isAvailable && !bookingSuccess && canUnbook && (
+                <button
+                  onClick={handleUnbook}
+                  className="ml-3 text-sm text-[--color-primary] underline hover:no-underline"
+                >
+                  Reset listing
+                </button>
+              )}
+            </div>
+            {bookingError && !adSlot.isAvailable && (
+              <p className="mt-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">
+                {bookingError}
               </p>
             )}
+            <div className="rounded-lg border-2 border-[--color-primary]/20 bg-[--color-primary]/5 px-5 py-3 text-right">
+              <p className="text-2xl font-bold text-[--color-primary] md:text-3xl">
+                ${Number(adSlot.basePrice).toLocaleString()}
+              </p>
+              <p className="text-sm font-medium text-[--color-muted]">per month</p>
+            </div>
           </div>
-          <span className={`rounded px-3 py-1 text-sm ${typeColors[adSlot.type] || 'bg-gray-100'}`}>
-            {adSlot.type}
-          </span>
-        </div>
-
-        {adSlot.description && <p className="mb-6 text-[--color-muted]">{adSlot.description}</p>}
-
-        <div className="flex items-center justify-between border-t border-[--color-border] pt-4">
-          <div>
-            <span
-              className={`text-sm font-medium ${adSlot.isAvailable ? 'text-green-600' : 'text-[--color-muted]'}`}
-            >
-              {adSlot.isAvailable ? '● Available' : '○ Currently Booked'}
-            </span>
-            {!adSlot.isAvailable && !bookingSuccess && (
-              <button
-                onClick={handleUnbook}
-                className="ml-3 text-sm text-[--color-primary] underline hover:opacity-80"
-              >
-                Reset listing
-              </button>
-            )}
-          </div>
-          <div className="text-right">
-            <p className="text-2xl font-bold text-[--color-primary]">
-              ${Number(adSlot.basePrice).toLocaleString()}
-            </p>
-            <p className="text-sm text-[--color-muted]">per month</p>
-          </div>
-        </div>
 
         {adSlot.isAvailable && !bookingSuccess && (
-          <div className="mt-6 border-t border-[--color-border] pt-6">
-            <h2 className="mb-4 text-lg font-semibold">Request This Placement</h2>
+          <div className="border-t border-[--color-border] pt-6">
+            <h2 className="mb-1 text-lg font-semibold text-[--color-foreground]">
+              Book or get a quote
+            </h2>
+            <p className="mb-5 text-sm text-[--color-muted]">
+              Secure this placement or request custom pricing. We&apos;ll connect you with the publisher.
+            </p>
 
             {roleLoading ? (
               <div className="py-4 text-center text-[--color-muted]">Loading...</div>
@@ -252,37 +290,41 @@ export function AdSlotDetail({ id }: Props) {
                     rows={3}
                   />
                 </div>
-                {bookingError && <p className="text-sm text-red-600">{bookingError}</p>}
-                <div className="flex flex-col gap-2 sm:flex-row">
+                {bookingError && (
+                  <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">
+                    {bookingError}
+                  </p>
+                )}
+                <div className="flex flex-col gap-3 sm:flex-row">
                   <button
                     onClick={handleBooking}
                     disabled={booking}
-                    className="min-h-[44px] flex-1 rounded-lg bg-[--color-primary] px-4 py-3 font-semibold text-white transition-colors hover:opacity-90 disabled:opacity-50"
+                    className="min-h-[48px] flex-1 rounded-lg bg-[--color-primary] px-5 py-3 text-base font-semibold text-white shadow-md transition-[transform,box-shadow] hover:bg-[--color-primary-hover] hover:shadow-lg active:scale-[0.98] disabled:opacity-50"
                   >
-                    {booking ? 'Booking...' : 'Book This Placement'}
+                    {booking ? 'Booking...' : 'Book this placement'}
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowQuoteModal(true)}
-                    className="min-h-[44px] flex-1 rounded-lg border border-[--color-border] px-4 py-3 font-medium hover:bg-gray-50"
+                    className="min-h-[48px] flex-1 rounded-lg border-2 border-[--color-border] bg-[--color-background] px-5 py-3 text-base font-semibold text-[--color-foreground] transition-colors hover:border-[--color-primary] hover:bg-[--color-primary]/5"
                   >
-                    Request a Quote
+                    Request a quote
                   </button>
                 </div>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <p className="text-sm text-[--color-muted]">
                   {user
                     ? 'Only sponsors can book directly. Request a quote for custom pricing or questions.'
-                    : 'Log in as a sponsor to book, or request a quote for custom pricing.'}
+                    : 'Sign in as a sponsor to book, or request a quote for custom pricing.'}
                 </p>
                 <button
                   type="button"
                   onClick={() => setShowQuoteModal(true)}
-                  className="w-full min-h-[44px] rounded-lg bg-[--color-primary] px-4 py-3 font-semibold text-white hover:opacity-90"
+                  className="w-full min-h-[48px] rounded-lg bg-indigo-600 px-5 py-3 text-base font-semibold text-white shadow-md transition-[transform,box-shadow] hover:bg-indigo-700 hover:shadow-lg active:scale-[0.98]"
                 >
-                  Request a Quote
+                  Request a quote
                 </button>
               </div>
             )}
@@ -305,14 +347,17 @@ export function AdSlotDetail({ id }: Props) {
             <p className="mt-1 text-sm text-green-700">
               Your request has been submitted. The publisher will be in touch soon.
             </p>
-            <button
-              onClick={handleUnbook}
-              className="mt-3 text-sm text-green-700 underline hover:text-green-800"
-            >
-              Remove Booking (reset for testing)
-            </button>
+            {canUnbook && (
+              <button
+                onClick={handleUnbook}
+                className="mt-3 text-sm text-green-700 underline hover:text-green-800"
+              >
+                Remove Booking (reset for testing)
+              </button>
+            )}
           </div>
         )}
+        </div>
       </div>
     </div>
   );
