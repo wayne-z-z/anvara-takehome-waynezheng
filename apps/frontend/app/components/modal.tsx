@@ -12,7 +12,7 @@ interface ModalProps {
   maxWidth?: string;
 }
 
-/** Renders a centered modal overlay via portal to document.body so it is never affected by parent transforms or stacking context. */
+/** Modal overlay (portal to body). On mobile: bottom-sheet style, slides up from bottom; on desktop: centered. Easy to dismiss (backdrop click, Escape). */
 export function Modal({ open, onClose, title, children, maxWidth = 'max-w-lg' }: ModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
 
@@ -35,7 +35,7 @@ export function Modal({ open, onClose, title, children, maxWidth = 'max-w-lg' }:
   const content = (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[200] flex items-center justify-center p-4"
+      className="fixed inset-0 z-[200] flex items-end justify-center p-0 md:items-center md:p-4"
       aria-modal="true"
       role="dialog"
       aria-labelledby="modal-title"
@@ -47,7 +47,7 @@ export function Modal({ open, onClose, title, children, maxWidth = 'max-w-lg' }:
         tabIndex={-1}
       />
       <div
-        className={`animate-modal-in relative z-10 w-full ${maxWidth} max-h-[90vh] overflow-y-auto rounded-xl border border-[--color-border] bg-[--color-background] shadow-2xl`}
+        className={`animate-modal-slide-up relative z-10 w-full max-h-[90vh] overflow-y-auto rounded-t-2xl border border-[--color-border] bg-[--color-background] shadow-2xl md:animate-modal-in md:rounded-xl ${maxWidth}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="sticky top-0 flex items-center justify-between border-b border-[--color-border] bg-[--color-background] px-5 py-4">

@@ -1,5 +1,6 @@
 'use client';
 
+/* Challenge 5: useActionState is the React 19 equivalent of useFormState (form state management). */
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { useRouter } from 'next/navigation';
