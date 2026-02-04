@@ -167,8 +167,6 @@ router.post('/:id/book', async (req: AuthRequest, res: Response) => {
 
     // In a real app, you'd create a Placement record here
     // For now, we just mark it as booked
-    console.log(`Ad slot ${id} booked by sponsor ${sponsorId}. Message: ${message || 'None'}`);
-
     res.json({
       success: true,
       message: 'Ad slot booked successfully!',

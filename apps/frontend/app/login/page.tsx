@@ -13,7 +13,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Auto-fill credentials based on selected role
+  // Demo credentials for takehome testing (see seed)
   const email = role === 'sponsor' ? 'sponsor@example.com' : 'publisher@example.com';
   const password = 'password';
 

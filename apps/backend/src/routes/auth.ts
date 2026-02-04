@@ -16,9 +16,8 @@ router.post('/login', async (_req: Request, res: Response) => {
 });
 
 // GET /api/auth/me - Get current user (for API clients)
-router.get('/me', async (req: Request, res: Response) => {
-  // TODO: Challenge 3 - Implement auth middleware to validate session
-  // For now, return unauthorized
+router.get('/me', async (_req: Request, res: Response) => {
+  // Validate session (e.g. via Better Auth) before returning user
   res.status(401).json({ error: 'Not authenticated' });
 });
 
