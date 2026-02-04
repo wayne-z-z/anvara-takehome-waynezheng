@@ -4,17 +4,11 @@ import { useEffect, useRef } from 'react';
 import { sendGAEvent } from '@next/third-parties/google';
 
 const GA_ENABLED = typeof window !== 'undefined' && !!process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
-const DEBUG =
-  typeof window !== 'undefined' &&
-  process.env.NEXT_PUBLIC_ANALYTICS_DEBUG === 'true';
+const DEBUG = typeof window !== 'undefined' && process.env.NEXT_PUBLIC_ANALYTICS_DEBUG === 'true';
 
 declare global {
   interface Window {
-    gtag?: (
-      command: 'event',
-      eventName: string,
-      eventParams?: Record<string, unknown>
-    ) => void;
+    gtag?: (command: 'event', eventName: string, eventParams?: Record<string, unknown>) => void;
   }
 }
 
@@ -72,7 +66,10 @@ export const analytics = {
 
   /** User submitted the request-quote form. Pass variant for A/B test analysis. */
   quoteSubmitted: (adSlotId: string, variant?: string) =>
-    trackEvent('quote_submitted', { ad_slot_id: adSlotId, ...(variant !== undefined && { ab_variant: variant }) }),
+    trackEvent('quote_submitted', {
+      ad_slot_id: adSlotId,
+      ...(variant !== undefined && { ab_variant: variant }),
+    }),
 
   /** User submitted the newsletter signup form */
   newsletterSignup: () => trackEvent('newsletter_signup'),
@@ -92,7 +89,10 @@ export const conversions = {
 
   /** Macro: user submitted a quote request. Pass variant for A/B test analysis. */
   quoteSubmitted: (adSlotId: string, variant?: string) =>
-    trackEvent('conversion_quote_submitted', { ad_slot_id: adSlotId, ...(variant !== undefined && { ab_variant: variant }) }),
+    trackEvent('conversion_quote_submitted', {
+      ad_slot_id: adSlotId,
+      ...(variant !== undefined && { ab_variant: variant }),
+    }),
 
   /** Macro: user completed newsletter signup */
   newsletterSignup: () => trackEvent('conversion_newsletter_signup'),

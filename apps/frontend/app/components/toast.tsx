@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-  type ReactNode,
-} from 'react';
+import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 
 type ToastType = 'success' | 'error';
 
@@ -34,16 +27,16 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  const addToast = useCallback((message: string, type: ToastType = 'success') => {
-    const id = `toast-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-    setToasts((prev) => [...prev, { id, message, type }]);
-    setTimeout(() => removeToast(id), TOAST_DURATION_MS);
-  }, [removeToast]);
-
-  const value = useMemo(
-    () => ({ toasts, addToast, removeToast }),
-    [toasts, addToast, removeToast]
+  const addToast = useCallback(
+    (message: string, type: ToastType = 'success') => {
+      const id = `toast-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+      setToasts((prev) => [...prev, { id, message, type }]);
+      setTimeout(() => removeToast(id), TOAST_DURATION_MS);
+    },
+    [removeToast]
   );
+
+  const value = useMemo(() => ({ toasts, addToast, removeToast }), [toasts, addToast, removeToast]);
 
   return (
     <ToastContext.Provider value={value}>
@@ -99,9 +92,7 @@ function ToastItem({
       >
         {toast.type === 'success' ? '✓' : '!'}
       </span>
-      <p className="flex-1 text-sm font-medium">
-        {toast.message}
-      </p>
+      <p className="flex-1 text-sm font-medium">{toast.message}</p>
       <button
         type="button"
         onClick={handleDismiss}

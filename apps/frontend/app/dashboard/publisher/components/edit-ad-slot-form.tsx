@@ -56,7 +56,10 @@ export function EditAdSlotForm({
     <form action={formAction} className="space-y-5">
       <input type="hidden" name="id" value={adSlot.id} />
       {state.error && (
-        <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">
+        <p
+          className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600"
+          role="alert"
+        >
           {state.error}
         </p>
       )}
@@ -75,7 +78,9 @@ export function EditAdSlotForm({
         )}
       </div>
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">Description</label>
+        <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">
+          Description
+        </label>
         <textarea
           name="description"
           rows={2}
@@ -94,7 +99,9 @@ export function EditAdSlotForm({
         </select>
       </div>
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">Position</label>
+        <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">
+          Position
+        </label>
         <input
           type="text"
           name="position"
@@ -104,7 +111,9 @@ export function EditAdSlotForm({
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">Width</label>
+          <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">
+            Width
+          </label>
           <input
             type="number"
             name="width"
@@ -114,7 +123,9 @@ export function EditAdSlotForm({
           />
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">Height</label>
+          <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">
+            Height
+          </label>
           <input
             type="number"
             name="height"
@@ -126,7 +137,9 @@ export function EditAdSlotForm({
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">Base price *</label>
+          <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">
+            Base price *
+          </label>
           <input
             type="number"
             name="basePrice"
@@ -142,7 +155,9 @@ export function EditAdSlotForm({
           )}
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">CPM floor</label>
+          <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">
+            CPM floor
+          </label>
           <input
             type="number"
             name="cpmFloor"

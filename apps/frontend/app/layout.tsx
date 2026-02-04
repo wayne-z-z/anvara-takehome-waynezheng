@@ -42,9 +42,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body className="flex min-h-screen flex-col antialiased">
-        {gaId && (
-          <script dangerouslySetInnerHTML={{ __html: gtagInline }} />
-        )}
+        {gaId && <script dangerouslySetInnerHTML={{ __html: gtagInline }} />}
         <ToastProvider>
           <Nav />
           <main className="mx-auto flex-1 w-full max-w-6xl p-4">{children}</main>

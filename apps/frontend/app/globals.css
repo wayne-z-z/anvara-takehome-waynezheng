@@ -123,9 +123,15 @@ body {
 }
 
 /* Animation delay utilities for page-fade-in (used on landing) */
-.animate-page-fade-in-delay-1 { animation-delay: 0.05s; }
-.animate-page-fade-in-delay-2 { animation-delay: 0.1s; }
-.animate-page-fade-in-delay-3 { animation-delay: 0.15s; }
+.animate-page-fade-in-delay-1 {
+  animation-delay: 0.05s;
+}
+.animate-page-fade-in-delay-2 {
+  animation-delay: 0.1s;
+}
+.animate-page-fade-in-delay-3 {
+  animation-delay: 0.15s;
+}
 
 /* Dashboard form inputs: focus ring and consistent spacing */
 .form-input {
@@ -137,7 +143,9 @@ body {
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
   line-height: 1.5;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
 }
 .form-input::placeholder {
   color: var(--color-muted);

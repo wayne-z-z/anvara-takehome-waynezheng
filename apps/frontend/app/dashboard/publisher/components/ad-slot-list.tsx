@@ -32,13 +32,16 @@ export function AdSlotList({ adSlots, error, emptyAction, pagination }: AdSlotLi
   const [removingIds, setRemovingIds] = useState<Set<string>>(new Set());
   const [removingSlots, setRemovingSlots] = useState<AdSlot[]>([]);
 
-  const onRequestDelete = useCallback((id: string) => {
-    const slot = adSlots.find((s) => s.id === id);
-    if (slot) {
-      setRemovingSlots((prev) => [...prev, slot]);
-      setRemovingIds((prev) => new Set(prev).add(id));
-    }
-  }, [adSlots]);
+  const onRequestDelete = useCallback(
+    (id: string) => {
+      const slot = adSlots.find((s) => s.id === id);
+      if (slot) {
+        setRemovingSlots((prev) => [...prev, slot]);
+        setRemovingIds((prev) => new Set(prev).add(id));
+      }
+    },
+    [adSlots]
+  );
 
   const onExitComplete = useCallback(
     async (id: string) => {

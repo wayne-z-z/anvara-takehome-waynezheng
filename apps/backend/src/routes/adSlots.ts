@@ -133,7 +133,7 @@ router.post('/', async (req: AuthRequest, res: Response) => {
 router.post('/:id/book', async (req: AuthRequest, res: Response) => {
   try {
     const id = getParam(req.params.id);
-    const { sponsorId, message } = req.body;
+    const { sponsorId } = req.body;
 
     if (!sponsorId) {
       res.status(400).json({ error: 'sponsorId is required' });

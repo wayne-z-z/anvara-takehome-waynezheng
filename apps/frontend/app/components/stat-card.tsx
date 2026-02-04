@@ -5,7 +5,11 @@ interface StatCardProps {
   valueClassName?: string;
 }
 
-export function StatCard({ label, value, valueClassName = 'text-[--color-foreground]' }: StatCardProps) {
+export function StatCard({
+  label,
+  value,
+  valueClassName = 'text-[--color-foreground]',
+}: StatCardProps) {
   return (
     <div className="rounded-xl border border-[--color-border] bg-[--color-background] px-4 py-3 shadow-sm transition-shadow hover:shadow-md">
       <p className="text-xs font-medium uppercase tracking-wide text-[--color-muted]">{label}</p>

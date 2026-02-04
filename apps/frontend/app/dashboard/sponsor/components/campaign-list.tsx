@@ -32,13 +32,16 @@ export function CampaignList({ campaigns, error, emptyAction, pagination }: Camp
   const [removingIds, setRemovingIds] = useState<Set<string>>(new Set());
   const [removingCampaigns, setRemovingCampaigns] = useState<Campaign[]>([]);
 
-  const onRequestDelete = useCallback((id: string) => {
-    const campaign = campaigns.find((c) => c.id === id);
-    if (campaign) {
-      setRemovingCampaigns((prev) => [...prev, campaign]);
-      setRemovingIds((prev) => new Set(prev).add(id));
-    }
-  }, [campaigns]);
+  const onRequestDelete = useCallback(
+    (id: string) => {
+      const campaign = campaigns.find((c) => c.id === id);
+      if (campaign) {
+        setRemovingCampaigns((prev) => [...prev, campaign]);
+        setRemovingIds((prev) => new Set(prev).add(id));
+      }
+    },
+    [campaigns]
+  );
 
   const onExitComplete = useCallback(
     async (id: string) => {

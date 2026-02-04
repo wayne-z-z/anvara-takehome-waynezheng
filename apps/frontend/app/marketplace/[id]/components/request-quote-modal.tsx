@@ -72,7 +72,9 @@ export function RequestQuoteModal({
       conversions.quoteSubmitted(adSlotId, ctaVariant);
     } catch (err) {
       setStatus('error');
-      setErrorMessage(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+      setErrorMessage(
+        err instanceof Error ? err.message : 'Something went wrong. Please try again.'
+      );
     }
   }
 

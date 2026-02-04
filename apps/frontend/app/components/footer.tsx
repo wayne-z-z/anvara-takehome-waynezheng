@@ -55,9 +55,7 @@ export function Footer() {
           </div>
 
           <div className="min-w-[280px] sm:max-w-xs">
-            <h3 className="text-sm font-semibold text-[--color-foreground]">
-              Stay in the loop
-            </h3>
+            <h3 className="text-sm font-semibold text-[--color-foreground]">Stay in the loop</h3>
             <p className="mt-1 text-sm text-[--color-muted]">
               Get updates on new inventory and tips for sponsors.
             </p>

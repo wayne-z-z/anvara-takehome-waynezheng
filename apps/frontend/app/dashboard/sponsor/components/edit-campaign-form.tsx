@@ -52,7 +52,10 @@ export function EditCampaignForm({
     <form action={formAction} className="space-y-5">
       <input type="hidden" name="id" value={campaign.id} />
       {state.error && (
-        <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">
+        <p
+          className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600"
+          role="alert"
+        >
           {state.error}
         </p>
       )}
@@ -71,7 +74,9 @@ export function EditCampaignForm({
         )}
       </div>
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">Description</label>
+        <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">
+          Description
+        </label>
         <textarea
           name="description"
           rows={2}
@@ -81,7 +86,9 @@ export function EditCampaignForm({
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">Budget *</label>
+          <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">
+            Budget *
+          </label>
           <input
             type="number"
             name="budget"
@@ -97,7 +104,9 @@ export function EditCampaignForm({
           )}
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">Status</label>
+          <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">
+            Status
+          </label>
           <select name="status" defaultValue={campaign.status} className="form-input">
             <option value="DRAFT">Draft</option>
             <option value="ACTIVE">Active</option>
@@ -108,7 +117,9 @@ export function EditCampaignForm({
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">Start date *</label>
+          <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">
+            Start date *
+          </label>
           <input
             type="date"
             name="startDate"
@@ -118,7 +129,9 @@ export function EditCampaignForm({
           />
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">End date *</label>
+          <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">
+            End date *
+          </label>
           <input
             type="date"
             name="endDate"

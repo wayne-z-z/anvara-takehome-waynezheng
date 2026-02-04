@@ -55,15 +55,8 @@ export interface PaginatedResponse<T> {
 // Campaigns
 export const getCampaigns = (sponsorId?: string, options?: RequestInit) =>
   api<Campaign[]>(sponsorId ? `/api/campaigns?sponsorId=${sponsorId}` : '/api/campaigns', options);
-export const getCampaignsPaginated = (
-  page: number,
-  limit: number,
-  options?: RequestInit
-) =>
-  api<PaginatedResponse<Campaign>>(
-    `/api/campaigns?page=${page}&limit=${limit}`,
-    options
-  );
+export const getCampaignsPaginated = (page: number, limit: number, options?: RequestInit) =>
+  api<PaginatedResponse<Campaign>>(`/api/campaigns?page=${page}&limit=${limit}`, options);
 export const getCampaign = (id: string) => api<Campaign>(`/api/campaigns/${id}`);
 export const createCampaign = (data: Record<string, unknown>, options?: RequestInit) =>
   api<Campaign>('/api/campaigns', { method: 'POST', body: JSON.stringify(data), ...options });
@@ -139,7 +132,9 @@ export async function requestQuote(
 }
 
 // Newsletter (dummy endpoint)
-export async function subscribeNewsletter(email: string): Promise<{ success: true; message: string }> {
+export async function subscribeNewsletter(
+  email: string
+): Promise<{ success: true; message: string }> {
   const res = await fetch(`${API_URL}/api/newsletter/subscribe`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

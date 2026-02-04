@@ -12,9 +12,7 @@ const linkBase =
 
 function activeClass(pathname: string, href: string) {
   const isActive =
-    href === '/'
-      ? pathname === '/'
-      : pathname === href || pathname.startsWith(href + '/');
+    href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(href + '/');
   return isActive ? 'font-semibold text-[--color-foreground]' : '';
 }
 
@@ -119,9 +117,13 @@ export function Nav() {
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           >
             {menuOpen ? (
-              <span className="text-2xl" aria-hidden>✕</span>
+              <span className="text-2xl" aria-hidden>
+                ✕
+              </span>
             ) : (
-              <span className="text-2xl" aria-hidden>☰</span>
+              <span className="text-2xl" aria-hidden>
+                ☰
+              </span>
             )}
           </button>
         </div>

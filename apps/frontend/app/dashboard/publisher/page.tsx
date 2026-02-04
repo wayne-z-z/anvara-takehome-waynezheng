@@ -51,9 +51,7 @@ export default async function PublisherDashboard({
   return (
     <div className="animate-page-fade-in space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-bold tracking-tight text-[--color-foreground]">
-          My Ad Slots
-        </h1>
+        <h1 className="text-2xl font-bold tracking-tight text-[--color-foreground]">My Ad Slots</h1>
         <CreateAdSlotButton />
       </div>
 

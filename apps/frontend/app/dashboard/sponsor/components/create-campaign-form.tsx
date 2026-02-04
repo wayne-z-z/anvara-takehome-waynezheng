@@ -39,9 +39,15 @@ export function CreateCampaignForm({ onSuccess }: { onSuccess?: () => void }) {
   }, [state.success, router, toast, onSuccess]);
 
   return (
-    <form action={formAction} className="space-y-5 rounded-xl border border-[--color-border] bg-[--color-background] p-5 shadow-sm">
+    <form
+      action={formAction}
+      className="space-y-5 rounded-xl border border-[--color-border] bg-[--color-background] p-5 shadow-sm"
+    >
       {state.error && (
-        <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">
+        <p
+          className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600"
+          role="alert"
+        >
           {state.error}
         </p>
       )}
@@ -62,12 +68,16 @@ export function CreateCampaignForm({ onSuccess }: { onSuccess?: () => void }) {
         )}
       </div>
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">Description</label>
+        <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">
+          Description
+        </label>
         <textarea name="description" rows={2} className="form-input resize-y" />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">Budget *</label>
+          <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">
+            Budget *
+          </label>
           <input
             type="number"
             name="budget"
@@ -85,7 +95,9 @@ export function CreateCampaignForm({ onSuccess }: { onSuccess?: () => void }) {
           )}
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">Status</label>
+          <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">
+            Status
+          </label>
           <select name="status" className="form-input">
             <option value="DRAFT">Draft</option>
             <option value="ACTIVE">Active</option>
@@ -96,7 +108,9 @@ export function CreateCampaignForm({ onSuccess }: { onSuccess?: () => void }) {
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">Start date *</label>
+          <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">
+            Start date *
+          </label>
           <input
             type="date"
             name="startDate"
@@ -114,7 +128,9 @@ export function CreateCampaignForm({ onSuccess }: { onSuccess?: () => void }) {
           )}
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">End date *</label>
+          <label className="mb-1.5 block text-sm font-medium text-[--color-foreground]">
+            End date *
+          </label>
           <input
             type="date"
             name="endDate"

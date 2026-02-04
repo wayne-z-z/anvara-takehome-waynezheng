@@ -111,7 +111,7 @@ export function AdSlotDetail({ id }: Props) {
       trackEvent('ab_exposure', { experiment_id: CTA_EXPERIMENT_ID, variant: ctaVariant });
     const t = setTimeout(send, 150);
     return () => clearTimeout(t);
-  }, [adSlot?.id, ctaVariant, roleLoading]);
+  }, [adSlot, ctaVariant, roleLoading]);
 
   const handleBooking = async () => {
     if (!roleInfo?.sponsorId || !adSlot) return;
@@ -165,7 +165,11 @@ export function AdSlotDetail({ id }: Props) {
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
-        const msg = data?.error || (response.status === 403 ? 'Only the publisher can reset this listing.' : 'Failed to reset booking');
+        const msg =
+          data?.error ||
+          (response.status === 403
+            ? 'Only the publisher can reset this listing.'
+            : 'Failed to reset booking');
         throw new Error(msg);
       }
 
@@ -177,7 +181,9 @@ export function AdSlotDetail({ id }: Props) {
     }
   };
 
-  const canUnbook = Boolean(adSlot?.publisher && roleInfo?.publisherId && adSlot.publisher.id === roleInfo.publisherId);
+  const canUnbook = Boolean(
+    adSlot?.publisher && roleInfo?.publisherId && adSlot.publisher.id === roleInfo.publisherId
+  );
 
   if (loading) {
     return <div className="py-12 text-center text-[--color-muted]">Loading...</div>;
@@ -271,7 +277,10 @@ export function AdSlotDetail({ id }: Props) {
               )}
             </div>
             {bookingError && !adSlot.isAvailable && (
-              <p className="mt-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">
+              <p
+                className="mt-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600"
+                role="alert"
+              >
                 {bookingError}
               </p>
             )}
@@ -283,115 +292,119 @@ export function AdSlotDetail({ id }: Props) {
             </div>
           </div>
 
-        {adSlot.isAvailable && !bookingSuccess && (
-          <div className="border-t border-[--color-border] pt-6">
-            <h2 className="mb-1 text-lg font-semibold text-[--color-foreground]">
-              Book or get a quote
-            </h2>
-            <p className="mb-5 text-sm text-[--color-muted]">
-              Secure this placement or request custom pricing. We&apos;ll connect you with the publisher.
-            </p>
+          {adSlot.isAvailable && !bookingSuccess && (
+            <div className="border-t border-[--color-border] pt-6">
+              <h2 className="mb-1 text-lg font-semibold text-[--color-foreground]">
+                Book or get a quote
+              </h2>
+              <p className="mb-5 text-sm text-[--color-muted]">
+                Secure this placement or request custom pricing. We&apos;ll connect you with the
+                publisher.
+              </p>
 
-            {roleLoading ? (
-              <div className="py-4 text-center text-[--color-muted]">Loading...</div>
-            ) : roleInfo?.role === 'sponsor' && roleInfo?.sponsorId ? (
-              <div className="space-y-4">
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-[--color-muted]">
-                    Your Company
-                  </label>
-                  <p className="text-[--color-foreground]">{roleInfo.name || user?.name}</p>
+              {roleLoading ? (
+                <div className="py-4 text-center text-[--color-muted]">Loading...</div>
+              ) : roleInfo?.role === 'sponsor' && roleInfo?.sponsorId ? (
+                <div className="space-y-4">
+                  <div>
+                    <label className="mb-1 block text-sm font-medium text-[--color-muted]">
+                      Your Company
+                    </label>
+                    <p className="text-[--color-foreground]">{roleInfo.name || user?.name}</p>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="message"
+                      className="mb-1 block text-sm font-medium text-[--color-muted]"
+                    >
+                      Message to Publisher (optional)
+                    </label>
+                    <textarea
+                      id="message"
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      placeholder="Tell the publisher about your campaign goals..."
+                      className="w-full rounded-lg border border-[--color-border] bg-[--color-background] px-3 py-2 text-[--color-foreground] placeholder:text-[--color-muted] focus:border-[--color-primary] focus:outline-none focus:ring-1 focus:ring-[--color-primary]"
+                      rows={3}
+                    />
+                  </div>
+                  {bookingError && (
+                    <p
+                      className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600"
+                      role="alert"
+                    >
+                      {bookingError}
+                    </p>
+                  )}
+                  <div className="flex flex-col gap-3 sm:flex-row">
+                    <button
+                      onClick={handleBooking}
+                      disabled={booking}
+                      className="min-h-[48px] flex-1 rounded-lg bg-[--color-primary] px-5 py-3 text-base font-semibold text-white shadow-md transition-[transform,box-shadow] hover:bg-[--color-primary-hover] hover:shadow-lg active:scale-[0.98] disabled:opacity-50"
+                    >
+                      {booking ? 'Booking...' : 'Book this placement'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        analytics.requestQuoteClick(adSlot.id, adSlot.name, ctaVariant);
+                        setShowQuoteModal(true);
+                      }}
+                      className="min-h-[48px] flex-1 rounded-lg border-2 border-[--color-border] bg-[--color-background] px-5 py-3 text-base font-semibold text-[--color-foreground] transition-colors hover:border-[--color-primary] hover:bg-[--color-primary]/5"
+                    >
+                      {ctaVariant === 'A' ? 'Request This Placement' : 'Get Started Now'}
+                    </button>
+                  </div>
                 </div>
-                <div>
-                  <label
-                    htmlFor="message"
-                    className="mb-1 block text-sm font-medium text-[--color-muted]"
-                  >
-                    Message to Publisher (optional)
-                  </label>
-                  <textarea
-                    id="message"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Tell the publisher about your campaign goals..."
-                    className="w-full rounded-lg border border-[--color-border] bg-[--color-background] px-3 py-2 text-[--color-foreground] placeholder:text-[--color-muted] focus:border-[--color-primary] focus:outline-none focus:ring-1 focus:ring-[--color-primary]"
-                    rows={3}
-                  />
-                </div>
-                {bookingError && (
-                  <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">
-                    {bookingError}
+              ) : (
+                <div className="space-y-4">
+                  <p className="text-sm text-[--color-muted]">
+                    {user
+                      ? 'Only sponsors can book directly. Request a quote for custom pricing or questions.'
+                      : 'Sign in as a sponsor to book, or request a quote for custom pricing.'}
                   </p>
-                )}
-                <div className="flex flex-col gap-3 sm:flex-row">
-                  <button
-                    onClick={handleBooking}
-                    disabled={booking}
-                    className="min-h-[48px] flex-1 rounded-lg bg-[--color-primary] px-5 py-3 text-base font-semibold text-white shadow-md transition-[transform,box-shadow] hover:bg-[--color-primary-hover] hover:shadow-lg active:scale-[0.98] disabled:opacity-50"
-                  >
-                    {booking ? 'Booking...' : 'Book this placement'}
-                  </button>
                   <button
                     type="button"
                     onClick={() => {
                       analytics.requestQuoteClick(adSlot.id, adSlot.name, ctaVariant);
                       setShowQuoteModal(true);
                     }}
-                    className="min-h-[48px] flex-1 rounded-lg border-2 border-[--color-border] bg-[--color-background] px-5 py-3 text-base font-semibold text-[--color-foreground] transition-colors hover:border-[--color-primary] hover:bg-[--color-primary]/5"
+                    className="w-full min-h-[48px] rounded-lg bg-indigo-600 px-5 py-3 text-base font-semibold text-white shadow-md transition-[transform,box-shadow] hover:bg-indigo-700 hover:shadow-lg active:scale-[0.98]"
                   >
                     {ctaVariant === 'A' ? 'Request This Placement' : 'Get Started Now'}
                   </button>
                 </div>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <p className="text-sm text-[--color-muted]">
-                  {user
-                    ? 'Only sponsors can book directly. Request a quote for custom pricing or questions.'
-                    : 'Sign in as a sponsor to book, or request a quote for custom pricing.'}
-                </p>
+              )}
+            </div>
+          )}
+
+          {showQuoteModal && (
+            <RequestQuoteModal
+              adSlotId={adSlot.id}
+              adSlotName={adSlot.name}
+              ctaVariant={ctaVariant}
+              defaultEmail={user?.email ?? ''}
+              defaultCompanyName={roleInfo?.name ?? user?.name ?? ''}
+              onClose={() => setShowQuoteModal(false)}
+            />
+          )}
+
+          {bookingSuccess && (
+            <div className="mt-6 rounded-lg border border-green-200 bg-green-50 p-4">
+              <h3 className="font-semibold text-green-800">Placement Booked!</h3>
+              <p className="mt-1 text-sm text-green-700">
+                Your request has been submitted. The publisher will be in touch soon.
+              </p>
+              {canUnbook && (
                 <button
-                  type="button"
-                  onClick={() => {
-                    analytics.requestQuoteClick(adSlot.id, adSlot.name, ctaVariant);
-                    setShowQuoteModal(true);
-                  }}
-                  className="w-full min-h-[48px] rounded-lg bg-indigo-600 px-5 py-3 text-base font-semibold text-white shadow-md transition-[transform,box-shadow] hover:bg-indigo-700 hover:shadow-lg active:scale-[0.98]"
+                  onClick={handleUnbook}
+                  className="mt-3 text-sm text-green-700 underline hover:text-green-800"
                 >
-                  {ctaVariant === 'A' ? 'Request This Placement' : 'Get Started Now'}
+                  Remove Booking (reset for testing)
                 </button>
-              </div>
-            )}
-          </div>
-        )}
-
-        {showQuoteModal && (
-          <RequestQuoteModal
-            adSlotId={adSlot.id}
-            adSlotName={adSlot.name}
-            ctaVariant={ctaVariant}
-            defaultEmail={user?.email ?? ''}
-            defaultCompanyName={roleInfo?.name ?? user?.name ?? ''}
-            onClose={() => setShowQuoteModal(false)}
-          />
-        )}
-
-        {bookingSuccess && (
-          <div className="mt-6 rounded-lg border border-green-200 bg-green-50 p-4">
-            <h3 className="font-semibold text-green-800">Placement Booked!</h3>
-            <p className="mt-1 text-sm text-green-700">
-              Your request has been submitted. The publisher will be in touch soon.
-            </p>
-            {canUnbook && (
-              <button
-                onClick={handleUnbook}
-                className="mt-3 text-sm text-green-700 underline hover:text-green-800"
-              >
-                Remove Booking (reset for testing)
-              </button>
-            )}
-          </div>
-        )}
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
