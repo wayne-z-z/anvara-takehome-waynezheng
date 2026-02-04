@@ -9,6 +9,8 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 interface RequestQuoteModalProps {
   adSlotId: string;
   adSlotName: string;
+  /** A/B test variant for the CTA that opened this modal (for outcome tracking) */
+  ctaVariant?: string;
   /** Pre-fill when user is logged in */
   defaultEmail?: string;
   defaultCompanyName?: string;
@@ -18,6 +20,7 @@ interface RequestQuoteModalProps {
 export function RequestQuoteModal({
   adSlotId,
   adSlotName,
+  ctaVariant,
   defaultEmail = '',
   defaultCompanyName = '',
   onClose,
@@ -65,8 +68,8 @@ export function RequestQuoteModal({
         timeline: timeline.trim() || undefined,
       });
       setStatus('success');
-      analytics.quoteSubmitted(adSlotId);
-      conversions.quoteSubmitted(adSlotId);
+      analytics.quoteSubmitted(adSlotId, ctaVariant);
+      conversions.quoteSubmitted(adSlotId, ctaVariant);
     } catch (err) {
       setStatus('error');
       setErrorMessage(err instanceof Error ? err.message : 'Something went wrong. Please try again.');

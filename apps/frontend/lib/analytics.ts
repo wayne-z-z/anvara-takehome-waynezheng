@@ -8,6 +8,16 @@ const DEBUG =
   typeof window !== 'undefined' &&
   process.env.NEXT_PUBLIC_ANALYTICS_DEBUG === 'true';
 
+declare global {
+  interface Window {
+    gtag?: (
+      command: 'event',
+      eventName: string,
+      eventParams?: Record<string, unknown>
+    ) => void;
+  }
+}
+
 /** Send a custom GA4 event. No-op if GA is not configured. Never throws. */
 export function trackEvent(
   event: string,
@@ -24,7 +34,12 @@ export function trackEvent(
   }
   if (!GA_ENABLED) return;
   try {
-    sendGAEvent({ event, ...params });
+    const eventParams = params ? { ...params } : undefined;
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+      window.gtag('event', event, eventParams ?? {});
+    } else {
+      sendGAEvent({ event, ...params });
+    }
   } catch {
     // Analytics must never break the app (e.g. ad blocker, gtag not loaded)
   }
@@ -47,12 +62,17 @@ export const analytics = {
   bookPlacementClick: (adSlotId: string, adSlotName: string) =>
     trackEvent('cta_book_click', { ad_slot_id: adSlotId, ad_slot_name: adSlotName }),
 
-  /** Micro: user clicked "Request a quote" (button open) */
-  requestQuoteClick: (adSlotId: string, adSlotName: string) =>
-    trackEvent('cta_quote_click', { ad_slot_id: adSlotId, ad_slot_name: adSlotName }),
+  /** Micro: user clicked "Request a quote" (button open). Pass variant for A/B test analysis. */
+  requestQuoteClick: (adSlotId: string, adSlotName: string, variant?: string) =>
+    trackEvent('cta_quote_click', {
+      ad_slot_id: adSlotId,
+      ad_slot_name: adSlotName,
+      ...(variant !== undefined && { ab_variant: variant }),
+    }),
 
-  /** User submitted the request-quote form */
-  quoteSubmitted: (adSlotId: string) => trackEvent('quote_submitted', { ad_slot_id: adSlotId }),
+  /** User submitted the request-quote form. Pass variant for A/B test analysis. */
+  quoteSubmitted: (adSlotId: string, variant?: string) =>
+    trackEvent('quote_submitted', { ad_slot_id: adSlotId, ...(variant !== undefined && { ab_variant: variant }) }),
 
   /** User submitted the newsletter signup form */
   newsletterSignup: () => trackEvent('newsletter_signup'),
@@ -70,9 +90,9 @@ export const conversions = {
   placementBooked: (adSlotId: string, adSlotName: string) =>
     trackEvent('conversion_placement_booked', { ad_slot_id: adSlotId, ad_slot_name: adSlotName }),
 
-  /** Macro: user submitted a quote request */
-  quoteSubmitted: (adSlotId: string) =>
-    trackEvent('conversion_quote_submitted', { ad_slot_id: adSlotId }),
+  /** Macro: user submitted a quote request. Pass variant for A/B test analysis. */
+  quoteSubmitted: (adSlotId: string, variant?: string) =>
+    trackEvent('conversion_quote_submitted', { ad_slot_id: adSlotId, ...(variant !== undefined && { ab_variant: variant }) }),
 
   /** Macro: user completed newsletter signup */
   newsletterSignup: () => trackEvent('conversion_newsletter_signup'),

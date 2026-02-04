@@ -1,11 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { getAdSlot } from '@/lib/api';
 import { authClient } from '@/auth-client';
-import { analytics, conversions, useTrackListingView } from '@/lib/analytics';
+import { analytics, conversions, useTrackListingView, trackEvent } from '@/lib/analytics';
+import { useABTest } from '@/lib/ab-test';
 import { RequestQuoteModal } from './request-quote-modal';
+
+const CTA_EXPERIMENT_ID = 'cta-button-text';
 
 interface AdSlot {
   id: string;
@@ -89,6 +92,26 @@ export function AdSlotDetail({ id }: Props) {
   }, [id]);
 
   useTrackListingView(adSlot, roleInfo?.role ?? null, roleLoading);
+  const ctaVariant = useABTest(CTA_EXPERIMENT_ID);
+
+  // Fire ab_exposure once per listing view (id + variant). Keyed by view so we fire on
+  // every listing open/refresh; the hook's ref would only fire once per component lifetime.
+  const lastExposureKey = useRef<{ id: string; variant: string } | null>(null);
+  useEffect(() => {
+    if (!adSlot || roleLoading) return;
+    const key = { id: adSlot.id, variant: ctaVariant };
+    if (
+      lastExposureKey.current?.id === key.id &&
+      lastExposureKey.current?.variant === key.variant
+    ) {
+      return;
+    }
+    lastExposureKey.current = key;
+    const send = () =>
+      trackEvent('ab_exposure', { experiment_id: CTA_EXPERIMENT_ID, variant: ctaVariant });
+    const t = setTimeout(send, 150);
+    return () => clearTimeout(t);
+  }, [adSlot?.id, ctaVariant, roleLoading]);
 
   const handleBooking = async () => {
     if (!roleInfo?.sponsorId || !adSlot) return;
@@ -311,12 +334,12 @@ export function AdSlotDetail({ id }: Props) {
                   <button
                     type="button"
                     onClick={() => {
-                      analytics.requestQuoteClick(adSlot.id, adSlot.name);
+                      analytics.requestQuoteClick(adSlot.id, adSlot.name, ctaVariant);
                       setShowQuoteModal(true);
                     }}
                     className="min-h-[48px] flex-1 rounded-lg border-2 border-[--color-border] bg-[--color-background] px-5 py-3 text-base font-semibold text-[--color-foreground] transition-colors hover:border-[--color-primary] hover:bg-[--color-primary]/5"
                   >
-                    Request a quote
+                    {ctaVariant === 'A' ? 'Request This Placement' : 'Get Started Now'}
                   </button>
                 </div>
               </div>
@@ -330,12 +353,12 @@ export function AdSlotDetail({ id }: Props) {
                 <button
                   type="button"
                   onClick={() => {
-                    analytics.requestQuoteClick(adSlot.id, adSlot.name);
+                    analytics.requestQuoteClick(adSlot.id, adSlot.name, ctaVariant);
                     setShowQuoteModal(true);
                   }}
                   className="w-full min-h-[48px] rounded-lg bg-indigo-600 px-5 py-3 text-base font-semibold text-white shadow-md transition-[transform,box-shadow] hover:bg-indigo-700 hover:shadow-lg active:scale-[0.98]"
                 >
-                  Request a quote
+                  {ctaVariant === 'A' ? 'Request This Placement' : 'Get Started Now'}
                 </button>
               </div>
             )}
@@ -346,6 +369,7 @@ export function AdSlotDetail({ id }: Props) {
           <RequestQuoteModal
             adSlotId={adSlot.id}
             adSlotName={adSlot.name}
+            ctaVariant={ctaVariant}
             defaultEmail={user?.email ?? ''}
             defaultCompanyName={roleInfo?.name ?? user?.name ?? ''}
             onClose={() => setShowQuoteModal(false)}
